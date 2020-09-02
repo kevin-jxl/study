@@ -1,0 +1,1 @@
+<view class="page-room"><trtc-room class="vue-ref" vue-id="2e10b040-1" config="{{rtcConfig}}" data-ref="trtc-component" bind:__l="__l"></trtc-room><block wx:if="{{showTipToast}}"><view class="tip-toast"><view>当前房间为1v1双人通话房间</view><view>不希望其他人打扰</view></view></block></view>

@@ -16,6 +16,13 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 public class ElSetClass {
     private static ExpressionParser parser = new SpelExpressionParser();
 
+    /**
+     *
+     * @param key   需要替换的占位符
+     * @param valus     占位符的名字数组
+     * @param objs      运行中动态传入的方法参数的值
+     * @return
+     */
     public static String getkey(String key, String[] valus, Object[] objs) {
         // 第一步，将key解析成el表达式
         Expression exp = parser.parseExpression(key);
