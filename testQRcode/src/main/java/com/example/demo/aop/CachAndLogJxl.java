@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CachAndLogJxl {
 
-    String key();
+    String key(); // key
 
-    String name();
+    String name(); // 缓存名称
 
-    boolean isCach() default false;
+    boolean isCach() default false; // 是否开启缓存
 }

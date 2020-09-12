@@ -12,7 +12,7 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * 项目名称：testQRcode
  * 类 名 称：LockSuo
- * 类 描 述：TODO
+ * 类 描 述：手写lock锁
  * 创建时间：2020/8/11 16:26
  * 创 建 人：纪星亮
  */
@@ -45,9 +45,9 @@ public class LockJxl implements Lock {
     public void unlock() {
         // CAS解锁，只有持有锁者才能解锁
         if (reference.compareAndSet(Thread.currentThread(), null)) {
-            // 唤醒阻塞线程
             for (Object obj : waites.toArray()) {
                 Thread t = (Thread) obj;
+                // 唤醒阻塞线程
                 LockSupport.unpark(t);
             }
         }
