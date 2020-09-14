@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysPostMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.SysPost" id="sysPostResult">
+        <result property="id" column="id"/> <!--  -->
+        <result property="postCode" column="post_code"/> <!-- 岗位编码 -->
+        <result property="postName" column="post_name"/> <!-- 岗位名称 -->
+        <result property="postOder" column="post_oder"/> <!-- 排序号 -->
+        <result property="postType" column="post_type"/> <!-- 岗位类别 暂空 -->
+        <result property="postFlag" column="post_flag"/> <!-- 岗位状态 0：状态 1：停用 -->
+        <result property="delFlag" column="del_flag"/> <!-- 是否删除 0：正常 1删除 -->
+        <result property="createtime" column="createtime"/> <!-- 创建时间 -->
+        <result property="updatetime" column="updatetime"/> <!-- 修改时间 -->
+        <result property="createBy" column="create_by"/> <!--  -->
+        <result property="updateBy" column="update_by"/> <!--  -->
+        <result property="remark" column="remark"/> <!-- 备注 -->
+        <result property="adminRemark" column="admin_remark"/> <!-- 管理员备注 -->
+    </resultMap>
+
+
+    <sql id="selectSysPostVo">
+        select id, post_code, post_name, post_oder, post_type, post_flag, del_flag, createtime, updatetime, create_by, update_by, remark, admin_remark from sys_post
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysPostList" parameterType="SysPost" resultMap="sysPostResult">
+        <include refid="selectSysPostVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysPostListByLike" parameterType="SysPost" resultMap="sysPostResult">
+        <include refid="selectSysPostVo"/>
+          where 1=1
+          and del_flag=1
+            <include refid="like"/>
+
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysPostById" parameterType="Integer" resultMap="sysPostResult">
+        <include refid="selectSysPostVo"/>
+        where id = #{id}
+    </select>
+
+
+    <update id="updateSysPost" parameterType="SysPost">
+        update sys_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postCode != null  and postCode != ''  ">post_code = #{postCode},</if>
+            <if test="postName != null  and postName != ''  ">post_name = #{postName},</if>
+            <if test="postOder != null  ">post_oder = #{postOder},</if>
+            <if test="postType != null  and postType != ''  ">post_type = #{postType},</if>
+            <if test="postFlag != null  and postFlag != ''  ">post_flag = #{postFlag},</if>
+            <if test="delFlag != null  ">del_flag = #{delFlag},</if>
+            <if test="createtime != null  ">createtime = #{createtime},</if>
+            <if test="updatetime != null  ">updatetime = #{updatetime},</if>
+            <if test="createBy != null  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  ">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">admin_remark = #{adminRemark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysPostById" parameterType="Integer">
+        delete from sys_post where id = #{id}
+    </delete>
+
+    <delete id="deleteSysPostByIds" parameterType="String">
+        delete from sys_post where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSysPost" parameterType="SysPost" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postCode != null  and postCode != ''  ">post_code,</if>
+            <if test="postName != null  and postName != ''  ">post_name,</if>
+            <if test="postOder != null  ">post_oder,</if>
+            <if test="postType != null  and postType != ''  ">post_type,</if>
+            <if test="postFlag != null  and postFlag != ''  ">post_flag,</if>
+            <if test="delFlag != null  ">del_flag,</if>
+            <if test="createtime != null  ">createtime,</if>
+            <if test="updatetime != null  ">updatetime,</if>
+            <if test="createBy != null  ">create_by,</if>
+            <if test="updateBy != null  ">update_by,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">admin_remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postCode != null  and postCode != ''  ">#{postCode},</if>
+            <if test="postName != null  and postName != ''  ">#{postName},</if>
+            <if test="postOder != null  ">#{postOder},</if>
+            <if test="postType != null  and postType != ''  ">#{postType},</if>
+            <if test="postFlag != null  and postFlag != ''  ">#{postFlag},</if>
+            <if test="delFlag != null  ">#{delFlag},</if>
+            <if test="createtime != null  ">#{createtime},</if>
+            <if test="updatetime != null  ">#{updatetime},</if>
+            <if test="createBy != null  ">#{createBy},</if>
+            <if test="updateBy != null  ">#{updateBy},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">#{adminRemark},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        id,  <!--  -->
+        post_code,  <!-- 岗位编码 -->
+        post_name,  <!-- 岗位名称 -->
+        post_oder,  <!-- 排序号 -->
+        post_type,  <!-- 岗位类别 暂空 -->
+        post_flag,  <!-- 岗位状态 0：状态 1：停用 -->
+        del_flag,  <!-- 是否删除 1：正常 0删除 -->
+        createtime,  <!-- 创建时间 -->
+        updatetime,  <!-- 修改时间 -->
+        create_by,  <!--  -->
+        update_by,  <!--  -->
+        remark,  <!-- 备注 -->
+        admin_remark  <!-- 管理员备注 -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="id != null ">
+            AND id = #{id}  <!--  -->
+        </if>
+        <if test="postCode != null and postCode != ''">
+            AND post_code = #{postCode}  <!-- 岗位编码 -->
+        </if>
+        <if test="postName != null and postName != ''">
+            AND post_name = #{postName}  <!-- 岗位名称 -->
+        </if>
+        <if test="postOder != null ">
+            AND post_oder = #{postOder}  <!-- 排序号 -->
+        </if>
+        <if test="postType != null and postType != ''">
+            AND post_type = #{postType}  <!-- 岗位类别 暂空 -->
+        </if>
+        <if test="postFlag != null and postFlag != ''">
+            AND post_flag = #{postFlag}  <!-- 岗位状态 1：状态 0：停用 -->
+        </if>
+        <if test="delFlag != null ">
+            AND del_flag = #{delFlag}  <!-- 是否删除 1：正常 0删除 -->
+        </if>
+        <if test="createtime != null ">
+            AND createtime = #{createtime}  <!-- 创建时间 -->
+        </if>
+        <if test="updatetime != null ">
+            AND updatetime = #{updatetime}  <!-- 修改时间 -->
+        </if>
+        <if test="createBy != null ">
+            AND create_by = #{createBy}  <!--  -->
+        </if>
+        <if test="updateBy != null ">
+            AND update_by = #{updateBy}  <!--  -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND remark = #{remark}  <!-- 备注 -->
+        </if>
+        <if test="adminRemark != null and adminRemark != ''">
+            AND admin_remark = #{adminRemark}  <!-- 管理员备注 -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="postCode != null and postCode != ''">
+            AND post_code like '%${postCode}%'  <!-- 岗位编码 -->
+        </if>
+        <if test="postName != null and postName != ''">
+            AND post_name like '%${postName}%'  <!-- 岗位名称 -->
+        </if>
+        <if test="postType != null and postType != ''">
+            AND post_type like '%${postType}%'  <!-- 岗位类别 暂空 -->
+        </if>
+        <if test="postFlag != null and postFlag != ''">
+            AND post_flag like '%${postFlag}%'  <!-- 岗位状态 0：状态 1：停用 -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND remark like '%${remark}%'  <!-- 备注 -->
+        </if>
+        <if test="adminRemark != null and adminRemark != ''">
+            AND admin_remark like '%${adminRemark}%'  <!-- 管理员备注 -->
+        </if>
+    </sql>
+</mapper>

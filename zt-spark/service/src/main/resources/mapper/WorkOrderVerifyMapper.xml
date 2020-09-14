@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.ztspark.mapper.WorkOrderVerifyMapper">
+
+	<!-- 通用返回对象 -->
+	<resultMap type="com.ztman.ztspark.entity.workorder.WorkOrderVerify"
+		id="workOrderVerifyResult">
+		<result property="id" column="id" /> <!-- 核查编号 -->
+		<result property="workOrderId" column="work_order_id" /> <!-- 工单号 -->
+		<result property="description" column="description" /> <!-- 完成情况说明 -->
+		<result property="isAchieve" column="is_achieve" /> <!-- 是否按期完成 -->
+		<result property="createTime" column="create_time" /> <!-- 创建时间 -->
+		<result property="userId" column="user_id" /> <!-- 核查用户 -->
+	</resultMap>
+
+
+	<sql id="selectWorkOrderVerifyVo">
+		select id, work_order_id, description, is_achieve, create_time, user_id from
+		work_order_verify
+	</sql>
+	<!-- 查询对象List -->
+	<select id="selectWorkOrderVerifyList" parameterType="WorkOrderVerify"
+		resultMap="workOrderVerifyResult">
+		<include refid="selectWorkOrderVerifyVo" />
+		<where>
+			<include refid="equal" />
+		</where>
+	</select>
+
+	<!-- 模糊查询对象List -->
+	<select id="selectWorkOrderVerifyListByLike" parameterType="WorkOrderVerify"
+		resultMap="workOrderVerifyResult">
+		<include refid="selectWorkOrderVerifyVo" />
+		<where>
+			<include refid="like" />
+		</where>
+	</select>
+
+	<!-- 根据主键查询对象 -->
+	<select id="selectWorkOrderVerifyById" parameterType="Long"
+		resultMap="workOrderVerifyResult">
+		<include refid="selectWorkOrderVerifyVo" />
+		where id = #{id}
+	</select>
+
+
+	<update id="updateWorkOrderVerify" parameterType="WorkOrderVerify">
+		update work_order_verify
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">work_order_id = #{workOrderId},</if>
+			<if test="description != null  and description != ''  ">description = #{description},</if>
+			<if test="isAchieve != null  and isAchieve != ''  ">is_achieve = #{isAchieve},</if>
+			<if test="createTime != null  ">create_time = #{createTime},</if>
+			<if test="userId != null  and userId != ''  ">user_id = #{userId},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteWorkOrderVerifyById" parameterType="Long">
+		delete from work_order_verify where id = #{id}
+	</delete>
+
+	<delete id="deleteWorkOrderVerifyByIds" parameterType="String">
+		delete from work_order_verify where id in
+		<foreach item="id" collection="array" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+
+	<!-- 新增对象 -->
+	<insert id="insertWorkOrderVerify" parameterType="WorkOrderVerify"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into work_order_verify
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">work_order_id,</if>
+			<if test="description != null  and description != ''  ">description,</if>
+			<if test="isAchieve != null  and isAchieve != ''  ">is_achieve,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="userId != null  and userId != ''  ">user_id,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">#{workOrderId},</if>
+			<if test="description != null  and description != ''  ">#{description},</if>
+			<if test="isAchieve != null  and isAchieve != ''  ">#{isAchieve},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="userId != null  and userId != ''  ">#{userId},</if>
+		</trim>
+	</insert>
+
+
+
+	<!-- 表字段 -->
+	<sql id="column">
+		id,  <!-- 核查编号 -->
+		work_order_id,  <!-- 工单号 -->
+		description,  <!-- 完成情况说明 -->
+		is_achieve,  <!-- 是否按期完成 -->
+		create_time,  <!-- 创建时间 -->
+		user_id  <!-- 核查用户 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+		<if test="id != null ">
+			AND id = #{id}  <!-- 核查编号 -->
+		</if>
+		<if test="workOrderId != null and workOrderId != ''">
+			AND work_order_id = #{workOrderId}  <!-- 工单号 -->
+		</if>
+		<if test="description != null and description != ''">
+			AND description = #{description}  <!-- 完成情况说明 -->
+		</if>
+		<if test="isAchieve != null and isAchieve != ''">
+			AND is_achieve = #{isAchieve}  <!-- 是否按期完成 -->
+		</if>
+		<if test="createTime != null ">
+			AND create_time = #{createTime}  <!-- 创建时间 -->
+		</if>
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}  <!-- 核查用户 -->
+		</if>
+	</sql>
+
+	<!-- Where模糊匹配字段 -->
+	<sql id="like">
+		<if test="workOrderId != null and workOrderId != ''">
+			AND work_order_id like '%${workOrderId}%'  <!-- 工单号 -->
+		</if>
+		<if test="description != null and description != ''">
+			AND description like '%${description}%'  <!-- 完成情况说明 -->
+		</if>
+		<if test="isAchieve != null and isAchieve != ''">
+			AND is_achieve like '%${isAchieve}%'  <!-- 是否按期完成 -->
+		</if>
+		<if test="userId != null and userId != ''">
+			AND user_id like '%${userId}%'  <!-- 核查用户 -->
+		</if>
+	</sql>
+</mapper>

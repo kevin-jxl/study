@@ -1,0 +1,81 @@
+spring:
+  application:
+    name: eureka
+
+#安全认证
+  security:
+    user:
+        name: spark
+        password: spark
+################### server0 单点配置， server1-3 集群配置 ###################
+---
+spring:
+  profiles: server0
+server:
+    port: 1001
+eureka:
+    client:
+        fetch-registry: false   #表示是否从Eureka Server获取注册信息，默认为true，单点设置为false,集群设置为true
+        register-with-eureka: false #表示是否将自己注册到Eureka Server，默认为true
+        #serviceUrl:
+        service-url:
+              #defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@server0:1025/eureka/
+              defaultZone: http://spark:spark@server0:1001/eureka/
+    instance:
+        hostname: server1 #配置域名，在本地host中设置匹配
+    server:
+        enable-self-preservation: false #关闭自我保护机制，当因网络原因或服务停掉时注册中心会踢掉服务
+---
+
+---
+spring:
+  profiles: server1
+server:
+    port: 1001
+eureka:
+    client:
+        fetch-registry: true   #表示是否从Eureka Server获取注册信息，默认为true，单点设置为false,集群设置为true
+        register-with-eureka: false #表示是否将自己注册到Eureka Server，默认为true
+        serviceUrl:
+            defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@server2:1002/eureka/
+    instance:
+        hostname: server1 #配置域名，在本地host中设置匹配
+    server:
+        enable-self-preservation: false #关闭自我保护机制，当因网络原因或服务停掉时注册中心会踢掉服务
+---
+
+---
+spring:
+  profiles: server2
+server:
+    port: 1002
+eureka:
+    client:
+        fetch-registry: true   #表示是否从Eureka Server获取注册信息，默认为true，单点设置为false,集群设置为true
+        register-with-eureka: false #表示是否将自己注册到Eureka Server，默认为true
+        serviceUrl:
+            defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@server3:1003/eureka/
+    instance:
+        hostname: server1 #配置域名，在本地host中设置匹配
+    server:
+        enable-self-preservation: false #关闭自我保护机制，当因网络原因或服务停掉时注册中心会踢掉服务
+---
+
+
+---
+spring:
+  profiles: server3
+server:
+    port: 1003
+eureka:
+    client:
+        fetch-registry: true   #表示是否从Eureka Server获取注册信息，默认为true，单点设置为false,集群设置为true
+        register-with-eureka: false #表示是否将自己注册到Eureka Server，默认为true
+        serviceUrl:
+            defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@server1:1001/eureka/
+    instance:
+        hostname: server1 #配置域名，在本地host中设置匹配
+    server:
+        enable-self-preservation: false #关闭自我保护机制，当因网络原因或服务停掉时注册中心会踢掉服务
+---
+

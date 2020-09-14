@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysConsumerMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.vo.SysConsumerVO" id="sysConsumerResult">
+        <result property="userId" column="user_id"/> <!-- 主键ID -->
+        <result property="username" column="username"/> <!-- 登陆名称 -->
+        <result property="userRealname" column="user_realname"/> <!-- 用户真实姓名 -->
+        <result property="sex" column="sex"/> <!-- 0-男  1-女 -->
+        <result property="phone" column="phone"/> <!-- 电话 -->
+        <result property="email" column="email"/> <!-- 邮箱 -->
+        <result property="empno" column="empno"/> <!-- 租户编码 -->
+        <result property="userFlag" column="user_flag"/> <!-- 用户状态 1-正常 0-停用 2-锁定 -->
+        <result property="createTime" column="create_time"/> <!-- 创建时间 -->
+        <result property="updateTime" column="update_time"/> <!-- 修改时间 -->
+        <result property="remark" column="remark"/> <!-- 备注 -->
+        <result property="postName" column="postName"/><!--职务名称-->
+        <result property="companyName" column="companyName"/><!--企业名称-->
+        <result property="organName" column="organName"/><!--车场名称 -->
+        <result property="roleName" column="roleName"/><!--角色名称-->
+        <result property="lastLoginDate" column="lastLoginDate"/><!--最后登录时间-->
+        <result column="area_id" property="areaId"></result>
+        <result column="organ_id" property="organId"></result>
+        <result column="postName" property="postName"></result>
+        <result column="company_id" property="companyId"></result>
+        <result column="role_code" property="roleCode"></result>
+        <result column="role_id" property="roleId"></result>
+        <result column="service_organ_id" property="serviceOrganId"></result>
+    </resultMap>
+
+
+    <!--
+      用户表单独出来 如果单独出来就用这个
+      select
+         us.consumer_id,
+         us.username,
+         us.user_realname,
+         us.sex,
+         us.phone,
+         us.email,
+         us.avatar,
+         us.user_flag,
+         us.create_time,
+         us.update_time,
+         us.remark,
+         us.lastLoginDate,
+         ud.post_name postName,
+         organ.name parkingLotName,
+         com.name companyName,
+         ro.role_desc roleName
+         from sys_consumer us
+         left join sys_user_role ur on ur.user_id = us.consumer_id
+         left join sys_role ro on ro.role_id = ur.role_id
+         left join sys_user_details ud on ud.consumer_id = us.consumer_id
+         left join sys_administrative_organ organ on organ.organ_id = ud.organ_id
+         left join sys_company com on com.com_id = ud.company_id -->
+    <sql id="selectSysConsumerById">
+         select
+        us.user_id,
+        us.username,
+        us.user_realname,
+        us.sex,
+        us.phone,
+        us.email,
+        us.empno,
+        us.avatar,
+        us.user_flag,
+        us.create_time,
+        us.update_time,
+        us.remark,
+        us.lastLoginDate,
+        us.post_name postName,
+        us.area_id,
+        us.service_organ_id,
+        us.organ_id,
+        us.company_id,
+        organ.name organName,
+        company.name companyName,
+        ro.role_name roleName,
+        ro.role_code,
+        ro.role_id
+        from sys_user us
+        left join sys_user_role ur on ur.user_id = us.user_id
+        left join sys_role ro on ro.role_id = ur.role_id and ro.del_flag='1'
+        left join sys_administrative_organ organ on organ.organ_id = us.organ_id and organ.del_flag='1'
+        left join sys_company company on company.com_id = us.company_id and company.del_flag='1'
+    </sql>
+    <sql id="selectSysConsumerVo">
+        select user_id, username, user_realname, sex, phone, email,avatar, user_flag,create_time, update_time, remark from sys_user
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysConsumerList" parameterType="SysConsumer" resultMap="sysConsumerResult">
+        <include refid="selectSysConsumerVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysConsumerListByLike" parameterType="SysConsumer" resultMap="sysConsumerResult">
+        <include refid="selectSysConsumerById"/>
+        <where>
+            <include refid="like"/>
+        </where>
+        order by us.create_time desc
+    </select>
+
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysConsumerById" parameterType="Integer" resultMap="sysConsumerResult">
+        <include refid="selectSysConsumerById"/>
+        where us.user_id = #{userId}
+    </select>
+
+
+    <update id="updateSysConsumer" parameterType="SysConsumer">
+        update sys_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''  ">username = #{username},</if>
+            <if test="password != null  and password != ''  ">password = #{password},</if>
+            <if test="userRealname != null  and userRealname != ''  ">user_realname = #{userRealname},</if>
+            <if test="sex != null  and sex != ''  ">sex = #{sex},</if>
+            <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
+            <if test="email != null  and email != ''  ">email = #{email},</if>
+            <if test="empno != null  and empno != ''  ">empno = #{empno},</if>
+            <if test="signName != null  and signName != ''  ">sign_name = #{signName},</if>
+            <if test="deptId != null  ">dept_id = #{deptId},</if>
+            <if test="salt != null  and salt != ''  ">salt = #{salt},</if>
+            <if test="avatar != null  and avatar != ''  ">avatar = #{avatar},</if>
+            <if test="userFlag != null  and userFlag != ''  ">user_flag = #{userFlag},</if>
+            <if test="passwordEndtime != null  ">password_endtime = #{passwordEndtime},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag = #{delFlag},</if>
+            <if test="wxOpenid != null  and wxOpenid != ''  ">wx_openid = #{wxOpenid},</if>
+            <if test="qqOpenid != null  and qqOpenid != ''  ">qq_openid = #{qqOpenid},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">admin_remark = #{adminRemark},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteSysConsumerById" parameterType="Integer">
+        delete from sys_user where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysConsumerByIds" parameterType="String">
+        delete from sys_user where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    <select id="getAllCompany" resultType="java.lang.Integer">
+        select com_id from sys_company where tenant_id = #{tenantId}
+    </select>
+
+    <!-- 新增对象 -->
+    <insert id="insertSysConsumer" parameterType="SysConsumer" useGeneratedKeys="true" keyProperty="userId">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''  ">username,</if>
+            <if test="password != null  and password != ''  ">password,</if>
+            <if test="userRealname != null  and userRealname != ''  ">user_realname,</if>
+            <if test="sex != null  and sex != ''  ">sex,</if>
+            <if test="phone != null  and phone != ''  ">phone,</if>
+            <if test="email != null  and email != ''  ">email,</if>
+            <if test="empno != null  and empno != ''  ">empno,</if>
+            <if test="signName != null  and signName != ''  ">sign_name,</if>
+            <if test="deptId != null  ">dept_id,</if>
+            <if test="salt != null  and salt != ''  ">salt,</if>
+            <if test="avatar != null  and avatar != ''  ">avatar,</if>
+            <if test="userFlag != null  and userFlag != ''  ">user_flag,</if>
+            <if test="passwordEndtime != null  ">password_endtime,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag,</if>
+            <if test="wxOpenid != null  and wxOpenid != ''  ">wx_openid,</if>
+            <if test="qqOpenid != null  and qqOpenid != ''  ">qq_openid,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">admin_remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null  and username != ''  ">#{username},</if>
+            <if test="password != null  and password != ''  ">#{password},</if>
+            <if test="userRealname != null  and userRealname != ''  ">#{userRealname},</if>
+            <if test="sex != null  and sex != ''  ">#{sex},</if>
+            <if test="phone != null  and phone != ''  ">#{phone},</if>
+            <if test="email != null  and email != ''  ">#{email},</if>
+            <if test="empno != null  and empno != ''  ">#{empno},</if>
+            <if test="signName != null  and signName != ''  ">#{signName},</if>
+            <if test="deptId != null  ">#{deptId},</if>
+            <if test="salt != null  and salt != ''  ">#{salt},</if>
+            <if test="avatar != null  and avatar != ''  ">#{avatar},</if>
+            <if test="userFlag != null  and userFlag != ''  ">#{userFlag},</if>
+            <if test="passwordEndtime != null  ">#{passwordEndtime},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="delFlag != null  and delFlag != ''  ">#{delFlag},</if>
+            <if test="wxOpenid != null  and wxOpenid != ''  ">#{wxOpenid},</if>
+            <if test="qqOpenid != null  and qqOpenid != ''  ">#{qqOpenid},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="adminRemark != null  and adminRemark != ''  ">#{adminRemark},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        user_id,  <!-- 主键ID -->
+        username,  <!-- 登陆名称 -->
+        password,  <!-- 登陆密码 -->
+        user_realname,  <!-- 用户真实姓名 -->
+        sex,  <!-- 0-男  1-女 -->
+        phone,  <!-- 电话 -->
+        email,  <!-- 邮箱 -->
+        empno,  <!-- 员工号 -->
+        sign_name,  <!-- 用户电子签名 -->
+        dept_id,  <!-- 部门ID -->
+        salt,  <!-- 随机盐 -->
+        avatar,  <!-- 头像 -->
+        user_flag,  <!-- 用户状态 1-正常 0-停用 2-锁定 -->
+        password_endtime,  <!-- 密码到期时间 -->
+        create_time,  <!-- 创建时间 -->
+        create_by,  <!-- 创建人 -->
+        update_time,  <!-- 修改时间 -->
+        update_by,  <!-- 修改人 -->
+        del_flag,  <!-- 0-删除，1-正常 -->
+        wx_openid,  <!-- 微信openid -->
+        qq_openid,  <!-- QQ openid -->
+        remark,  <!--  -->
+        admin_remark,  <!-- 工程师备注 -->
+        service_organ_id  <!-- 工程师备注 -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="userId != null ">
+            AND user_id = #{userId}  <!-- 主键ID -->
+        </if>
+        <if test="username != null and username != ''">
+            AND username = #{username}  <!-- 登陆名称 -->
+        </if>
+        <if test="password != null and password != ''">
+            AND password = #{password}  <!-- 登陆密码 -->
+        </if>
+        <if test="userRealname != null and userRealname != ''">
+            AND user_realname = #{userRealname}  <!-- 用户真实姓名 -->
+        </if>
+        <if test="sex != null and sex != ''">
+            AND sex = #{sex}  <!-- 0-男  1-女 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND phone = #{phone}  <!-- 电话 -->
+        </if>
+        <if test="email != null and email != ''">
+            AND email = #{email}  <!-- 邮箱 -->
+        </if>
+        <if test="empno != null and empno != ''">
+            AND empno = #{empno}  <!-- 员工号 -->
+        </if>
+        <if test="signName != null and signName != ''">
+            AND sign_name = #{signName}  <!-- 用户电子签名 -->
+        </if>
+        <if test="deptId != null ">
+            AND dept_id = #{deptId}  <!-- 部门ID -->
+        </if>
+        <if test="salt != null and salt != ''">
+            AND salt = #{salt}  <!-- 随机盐 -->
+        </if>
+        <if test="avatar != null and avatar != ''">
+            AND avatar = #{avatar}  <!-- 头像 -->
+        </if>
+        <if test="userFlag != null and userFlag != ''">
+            AND user_flag = #{userFlag}  <!-- 用户状态 1-正常 0-停用 2-锁定 -->
+        </if>
+        <if test="passwordEndtime != null ">
+            AND password_endtime = #{passwordEndtime}  <!-- 密码到期时间 -->
+        </if>
+        <if test="createTime != null ">
+            AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+        <if test="createBy != null and createBy != ''">
+            AND create_by = #{createBy}  <!-- 创建人 -->
+        </if>
+        <if test="updateTime != null ">
+            AND update_time = #{updateTime}  <!-- 修改时间 -->
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            AND update_by = #{updateBy}  <!-- 修改人 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag = #{delFlag}  <!-- 0-删除，1-正常 -->
+        </if>
+        <if test="wxOpenid != null and wxOpenid != ''">
+            AND wx_openid = #{wxOpenid}  <!-- 微信openid -->
+        </if>
+        <if test="qqOpenid != null and qqOpenid != ''">
+            AND qq_openid = #{qqOpenid}  <!-- QQ openid -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND remark = #{remark}  <!--  -->
+        </if>
+        <if test="adminRemark != null and adminRemark != ''">
+            AND admin_remark = #{adminRemark}  <!-- 工程师备注 -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="username != null and username != ''">
+            AND us.username like '%${username}%' or us.user_realname like '%${username}%' <!-- 登陆名称 -->
+        </if>
+        <if test="userRealname != null and userRealname != ''">
+            AND us.user_realname like '%${userRealname}%'  <!-- 用户真实姓名 -->
+        </if>
+        <if test="sex != null and sex != ''">
+            AND us.sex like '%${sex}%'  <!-- 0-男  1-女 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND us.phone like '%${phone}%'  <!-- 电话 -->
+        </if>
+        <if test="email != null and email != ''">
+            AND us.email like '%${email}%'  <!-- 邮箱 -->
+        </if>
+        <if test="empno != null and empno != ''">
+            AND us.empno like '%${empno}%'  <!-- 员工号 -->
+        </if>
+        <if test="userFlag != null and userFlag != ''">
+            AND us.user_flag like '%${userFlag}%'  <!-- 用户状态 1-正常 0-停用 2-锁定 -->
+        </if>
+        <if test="createBy != null and createBy != ''">
+            AND us.create_by = #{createBy}  <!-- 创建人 -->
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            AND us.update_by like '%${updateBy}%'  <!-- 修改人 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND us.del_flag like '%${delFlag}%'  <!-- 0-删除，1-正常 -->
+        </if>
+        <if test="companyId != null and companyId != ''">
+            AND us.company_id = #{companyId}  <!-- 企业Id -->
+        </if>
+        <if test="organId != null and organId != ''">
+            AND us.organ_id = #{organId}  <!-- 车场id-->
+        </if>
+        <if test="companyName != null and companyName != ''">
+            AND company.name like CONCAT('%','${companyName}','%')  <!-- 企业名称 -->
+        </if>
+        <if test="organName != null and organName != ''">
+            AND organ.name  like CONCAT('%','${organName}','%')  <!-- 车场名称-->
+        </if>
+        <if test="companyIds != null and companyIds.size() > 0">
+            and us.company_id in
+            <foreach collection="companyIds" open="(" close=")" item="ids" separator=",">
+                #{ids}
+            </foreach>
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysDictIndexMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.SysDictIndex" id="sysDictIndexResult">
+        <result property="id" column="id"/> <!-- 主键 -->
+        <result property="code" column="code"/> <!-- 名称 -->
+        <result property="name" column="name"/> <!-- 名称 -->
+        <result property="description" column="description"/> <!-- 详细 -->
+        <result property="sort" column="sort"/> <!-- 排序 -->
+        <result property="createId" column="create_id"/> <!-- 排序 -->
+        <result property="remarks" column="remarks"/> <!-- 备注 -->
+        <result property="dictType" column="dict_type"/> <!-- 分类ID -->
+        <result property="delFlag" column="del_flag"/> <!-- 有效标识1有效0失效 -->
+        <result property="createTime" column="create_time"/> <!-- 创建时间 -->
+        <result property="updateTime" column="update_time"/> <!-- 更新时间 -->
+    </resultMap>
+
+
+    <sql id="selectSysDictIndexVo">
+        select id,code, name, description, create_id, sort, remarks, dict_type, del_flag, create_time, update_time from sys_dict_index
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysDictIndexList" parameterType="com.ztman.admin.api.entity.SysDictIndex" resultMap="sysDictIndexResult">
+        <include refid="selectSysDictIndexVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysDictIndexListByLike" parameterType="com.ztman.admin.api.entity.SysDictIndex" resultType="com.ztman.admin.api.vo.SysDictIndexVO">
+        select
+        d.id,
+        d.code,
+        d.name,
+        d.create_id,
+        d.description,
+        d.sort,
+        d.remarks,
+        d.dict_type,
+        d.del_flag,
+        d.create_time,
+        d.update_time,
+        u.user_realname as create_name
+        from
+        sys_dict_index as d
+        LEFT JOIN
+        sys_user u
+        ON
+        d.create_id = u.user_id
+        WHERE
+        d.del_flag = 1
+        <if test="code != null and code != ''">
+            AND d.code like '%${code}%'  <!-- 名称 -->
+        </if>
+        <if test="name != null and name != ''">
+            AND d.name like '%${name}%'  <!-- 名称 -->
+        </if>
+        <if test="description != null and description != ''">
+            AND d.description like '%${description}%'  <!-- 详细 -->
+        </if>
+        <if test="remarks != null and remarks != ''">
+            AND d.remarks like '%${remarks}%'  <!-- 备注 -->
+        </if>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysDictIndexById" parameterType="Integer" resultMap="sysDictIndexResult">
+        <include refid="selectSysDictIndexVo"/>
+        where id = #{id}
+    </select>
+
+
+    <update id="updateSysDictIndex" parameterType="com.ztman.admin.api.entity.SysDictIndex">
+        update sys_dict_index
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null  and code != ''  ">code = #{code},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="description != null  and description != ''  ">description = #{description},</if>
+            <if test="sort != null  ">sort = #{sort},</if>
+            <if test="createId != null  ">create_id = #{createId},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+            <if test="dictType != null  ">dict_type = #{dictType},</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag = #{delFlag},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysDictIndexById" parameterType="Integer">
+        delete from sys_dict_index where id = #{id}
+    </delete>
+
+    <delete id="deleteSysDictIndexByIds" parameterType="String">
+        delete from sys_dict_index where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSysDictIndex" parameterType="com.ztman.admin.api.entity.SysDictIndex" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_dict_index
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null  and code != ''  ">code,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="description != null  and description != ''  ">description,</if>
+            <if test="sort != null  ">sort,</if>
+            <if test="createId != null  ">create_id,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+            <if test="dictType != null  ">dict_type,</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null  and code != ''  ">#{code},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="description != null  and description != ''  ">#{description},</if>
+            <if test="sort != null  ">#{sort},</if>
+            <if test="createId != null  ">#{createId},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+            <if test="dictType != null  ">#{dictType},</if>
+            <if test="delFlag != null  and delFlag != ''  ">#{delFlag},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        id,  <!-- 主键 -->
+        code,  <!-- 名称 -->
+        name,  <!-- 名称 -->
+        description,  <!-- 详细 -->
+        sort,  <!-- 排序 -->
+        create_id,
+        remarks,  <!-- 备注 -->
+        dict_type,  <!-- 分类ID -->
+        del_flag,  <!-- 有效标识0有效1失效 -->
+        create_time,  <!-- 创建时间 -->
+        update_time  <!-- 更新时间 -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="id != null ">
+            AND id = #{id}  <!-- 主键 -->
+        </if>
+        <if test="code != null and code != ''">
+            AND code = #{code}  <!-- 名称 -->
+        </if>
+        <if test="name != null and name != ''">
+            AND name = #{name}  <!-- 名称 -->
+        </if>
+        <if test="description != null and description != ''">
+            AND description = #{description}  <!-- 详细 -->
+        </if>
+        <if test="createId != null and createId != ''">
+            AND create_id = #{createId}  <!-- 详细 -->
+        </if>
+        <if test="sort != null ">
+            AND sort = #{sort}  <!-- 排序 -->
+        </if>
+        <if test="remarks != null and remarks != ''">
+            AND remarks = #{remarks}  <!-- 备注 -->
+        </if>
+        <if test="dictType != null ">
+            AND dict_type = #{dictType}  <!-- 分类ID -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag = #{delFlag}  <!-- 有效标识1有效0失效 -->
+        </if>
+        <if test="createTime != null ">
+            AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+        <if test="updateTime != null ">
+            AND update_time = #{updateTime}  <!-- 更新时间 -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="code != null and code != ''">
+            AND code like '%${code}%'  <!-- 名称 -->
+        </if>
+        <if test="name != null and name != ''">
+            AND name like '%${name}%'  <!-- 名称 -->
+        </if>
+        <if test="description != null and description != ''">
+            AND description like '%${description}%'  <!-- 详细 -->
+        </if>
+        <if test="remarks != null and remarks != ''">
+            AND remarks like '%${remarks}%'  <!-- 备注 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag like '%${delFlag}%'  <!-- 有效标识0有效1失效 -->
+        </if>
+    </sql>
+</mapper>

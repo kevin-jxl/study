@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.ztspark.mapper.CompanyWorkMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.ztspark.entity.company.CompanyWork" id="companyWorkResult">
+        <result property="workId" column="work_id"/> <!--  -->
+        <result property="workName" column="work_name"/> <!-- 姓名 -->
+        <result property="workDepartment" column="work_department"/> <!-- 部门 -->
+        <result property="workPost" column="work_post"/> <!-- 职位 -->
+        <result property="workAttendance" column="work_attendance"/> <!-- 出勤 -->
+        <result property="workAbnormal" column="work_abnormal"/> <!-- 异常 -->
+        <result property="workLeave" column="work_leave"/> <!-- 请假 -->
+        <result property="workOvertime" column="work_overtime"/> <!-- 加班 -->
+        <result property="workOff" column="work_off"/> <!-- 调休 -->
+        <result property="workOut" column="work_out"/> <!-- 外出 -->
+        <result property="delFlag" column="del_flag"/> <!-- 删除状态，0-删除，1-正常 -->
+    </resultMap>
+
+
+    <sql id="selectCompanyWorkVo">
+        select work_id, work_name, work_department, work_post, work_attendance,
+         work_abnormal, work_leave, work_overtime, work_off, work_out,  del_flag from zt_company_work
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectCompanyWorkList" parameterType="com.ztman.ztspark.entity.company.CompanyWork"
+            resultMap="companyWorkResult">
+        <include refid="selectCompanyWorkVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectCompanyWorkListByLike" parameterType="com.ztman.ztspark.entity.company.CompanyWork"
+            resultType="com.ztman.ztspark.entity.company.CompanyWork">
+        SELECT
+        cw.*
+        FROM
+        zt_company_work as cw
+        LEFT JOIN
+        zt_company_people as cp
+        ON
+        cw.people_id = cp.id
+        WHERE
+        cp.del_flag = 1
+        AND
+        cw.del_flag = 1
+        <if test="workName != null and workName != ''">
+            AND cw.work_name like '%${workName}%'  <!-- 姓名 -->
+        </if>
+        <if test="workDepartment != null and workDepartment != ''">
+            AND cw.work_department like '%${workDepartment}%'  <!-- 部门 -->
+        </if>
+        <if test="workPost != null and workPost != ''">
+            AND cw.work_post like '%${workPost}%'  <!-- 职位 -->
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND DATE_FORMAT(cw.work_start_time,'%Y-%m') = DATE_FORMAT(#{startTime},'%Y-%m') <!-- 年月份精准 -->
+        </if>
+        ORDER BY
+        cw.work_start_time desc
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectCompanyWorkById" parameterType="Integer" resultMap="companyWorkResult">
+        <include refid="selectCompanyWorkVo"/>
+        where work_id = #{workId}
+    </select>
+
+
+    <update id="updateCompanyWork" parameterType="com.ztman.ztspark.entity.company.CompanyWork">
+        update zt_company_work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workName != null  and workName != ''  ">work_name = #{workName},</if>
+            <if test="workDepartment != null  and workDepartment != ''  ">work_department = #{workDepartment},</if>
+            <if test="workPost != null  and workPost != ''  ">work_post = #{workPost},</if>
+            <if test="workAttendance != null  ">work_attendance = #{workAttendance},</if>
+            <if test="workAbnormal != null  ">work_abnormal = #{workAbnormal},</if>
+            <if test="workLeave != null  ">work_leave = #{workLeave},</if>
+            <if test="workOvertime != null  ">work_overtime = #{workOvertime},</if>
+            <if test="workOff != null  ">work_off = #{workOff},</if>
+            <if test="workOut != null  ">work_out = #{workOut},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="createBy != null  ">create_by = #{createBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  ">update_by = #{updateBy},</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag = #{delFlag},</if>
+        </trim>
+        where work_id = #{workId}
+    </update>
+
+    <update id="deleteCompanyWorkById" parameterType="Integer">
+        update zt_company_work set del_flag = 0 where work_id = #{workId}
+    </update>
+
+    <update id="deleteCompanyWorkByPeopleId" parameterType="Integer">
+        update zt_company_work set del_flag = 0 where people_id = #{id}
+    </update>
+
+    <delete id="deleteCompanyWorkByIds" parameterType="String">
+        delete from zt_company_work where work_id in
+        <foreach item="workId" collection="array" open="(" separator="," close=")">
+            #{workId}
+        </foreach>
+    </delete>
+
+    <insert id="generateDutyInfo">
+        insert into zt_company_work
+        (work_start_time, work_end_time, people_id, work_name, work_post, work_department)
+        select #{first}, #{last}, id, `name`, department, post from zt_company_people
+    </insert>
+
+    <insert id="addCompanyWorkByPeople" parameterType="com.ztman.ztspark.entity.company.CompanyPeople">
+        INSERT INTO zt_company_work
+        (work_start_time, work_end_time, people_id, work_name, work_department, work_post)
+        VALUES (#{firstDay}, #{lastDay}, #{id}, #{name}, #{department}, #{post})
+    </insert>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertCompanyWork" parameterType="com.ztman.ztspark.entity.company.CompanyWork" useGeneratedKeys="true"
+            keyProperty="workId">
+        insert into zt_company_work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workName != null  and workName != ''  ">work_name,</if>
+            <if test="workDepartment != null  and workDepartment != ''  ">work_department,</if>
+            <if test="workPost != null  and workPost != ''  ">work_post,</if>
+            <if test="workAttendance != null  ">work_attendance,</if>
+            <if test="workAbnormal != null  ">work_abnormal,</if>
+            <if test="workLeave != null  ">work_leave,</if>
+            <if test="workOvertime != null  ">work_overtime,</if>
+            <if test="workOff != null  ">work_off,</if>
+            <if test="workOut != null  ">work_out,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="createBy != null  ">create_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="updateBy != null  ">update_by,</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workName != null  and workName != ''  ">#{workName},</if>
+            <if test="workDepartment != null  and workDepartment != ''  ">#{workDepartment},</if>
+            <if test="workPost != null  and workPost != ''  ">#{workPost},</if>
+            <if test="workAttendance != null  ">#{workAttendance},</if>
+            <if test="workAbnormal != null  ">#{workAbnormal},</if>
+            <if test="workLeave != null  ">#{workLeave},</if>
+            <if test="workOvertime != null  ">#{workOvertime},</if>
+            <if test="workOff != null  ">#{workOff},</if>
+            <if test="workOut != null  ">#{workOut},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="createBy != null  ">#{createBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="updateBy != null  ">#{updateBy},</if>
+            <if test="delFlag != null  and delFlag != ''  ">#{delFlag},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        work_id,  <!--  -->
+        work_name,  <!-- 姓名 -->
+        work_department,  <!-- 部门 -->
+        work_post,  <!-- 职位 -->
+        work_attendance,  <!-- 出勤 -->
+        work_abnormal,  <!-- 异常 -->
+        work_leave,  <!-- 请假 -->
+        work_overtime,  <!-- 加班 -->
+        work_off,  <!-- 调休 -->
+        work_out,  <!-- 外出 -->
+        create_time,  <!-- 创建时间 -->
+        create_by,  <!-- 创建人 -->
+        update_time,  <!-- 修改时间 -->
+        update_by,  <!-- 修改人 -->
+        del_flag  <!-- 删除状态，0-删除，1-正常 -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="workId != null ">
+            AND work_id = #{workId}  <!--  -->
+        </if>
+        <if test="workName != null and workName != ''">
+            AND work_name = #{workName}  <!-- 姓名 -->
+        </if>
+        <if test="workDepartment != null and workDepartment != ''">
+            AND work_department = #{workDepartment}  <!-- 部门 -->
+        </if>
+        <if test="workPost != null and workPost != ''">
+            AND work_post = #{workPost}  <!-- 职位 -->
+        </if>
+        <if test="workAttendance != null ">
+            AND work_attendance = #{workAttendance}  <!-- 出勤 -->
+        </if>
+        <if test="workAbnormal != null ">
+            AND work_abnormal = #{workAbnormal}  <!-- 异常 -->
+        </if>
+        <if test="workLeave != null ">
+            AND work_leave = #{workLeave}  <!-- 请假 -->
+        </if>
+        <if test="workOvertime != null ">
+            AND work_overtime = #{workOvertime}  <!-- 加班 -->
+        </if>
+        <if test="workOff != null ">
+            AND work_off = #{workOff}  <!-- 调休 -->
+        </if>
+        <if test="workOut != null ">
+            AND work_out = #{workOut}  <!-- 外出 -->
+        </if>
+        <if test="createTime != null ">
+            AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+        <if test="createBy != null ">
+            AND create_by = #{createBy}  <!-- 创建人 -->
+        </if>
+        <if test="updateTime != null ">
+            AND update_time = #{updateTime}  <!-- 修改时间 -->
+        </if>
+        <if test="updateBy != null ">
+            AND update_by = #{updateBy}  <!-- 修改人 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag = #{delFlag}  <!-- 删除状态，0-删除，1-正常 -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="workName != null and workName != ''">
+            AND work_name like '%${workName}%'  <!-- 姓名 -->
+        </if>
+        <if test="workDepartment != null and workDepartment != ''">
+            AND work_department like '%${workDepartment}%'  <!-- 部门 -->
+        </if>
+        <if test="workPost != null and workPost != ''">
+            AND work_post like '%${workPost}%'  <!-- 职位 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag like '%${delFlag}%'  <!-- 删除状态，0-删除，1-正常 -->
+        </if>
+    </sql>
+</mapper>

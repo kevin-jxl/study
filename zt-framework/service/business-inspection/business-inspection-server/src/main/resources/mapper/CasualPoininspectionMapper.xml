@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.business.inspection.mapper.CasualPoininspectionMapper">
+
+	<!-- 通用返回对象 -->
+    <resultMap type="com.ztman.business.inspection.client.entity.CasualPoininspection" id="casualPoininspectionResult">
+                        <result property="id" column="id"/> <!-- id -->
+                        <result property="tenantId" column="tenant_id"/> <!-- 租户ID -->
+                        <result property="doUserId" column="do_user_id"/> <!-- 检查人ID -->
+                        <result property="doUserName" column="do_user_name"/> <!-- 检查人姓名 -->
+                        <result property="status" column="status"/> <!-- 点检状态（0正常 1异常） -->
+                        <result property="equipmentName" column="equipment_name"/> <!-- 设备名称 -->
+                        <result property="equipmentId" column="equipment_id"/> <!-- 设备编号 -->
+                        <result property="address" column="address"/> <!-- 地点 -->
+                        <result property="groupId" column="group_id"/> <!-- 附件组ID -->
+                        <result property="createTime" column="create_time"/> <!-- 创建时间 -->
+            </resultMap>
+
+
+    <sql id="selectCasualPoininspectionVo">
+        select id, tenant_id, do_user_id, do_user_name, status, equipment_name, equipment_id, address, group_id, create_time from casual_point_inspection
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectCasualPoininspectionList" parameterType="com.ztman.business.inspection.client.entity.CasualPoininspection" resultMap="casualPoininspectionResult">
+        <include refid="selectCasualPoininspectionVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectCasualPoininspectionListByLike" parameterType="com.ztman.business.inspection.client.entity.CasualPoininspection" resultMap="casualPoininspectionResult">
+        <include refid="selectCasualPoininspectionVo"/>
+        <where>
+            <include refid="like"/>
+        </where>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectCasualPoininspectionById" parameterType="Integer" resultMap="casualPoininspectionResult">
+        <include refid="selectCasualPoininspectionVo"/>
+        where id = #{id}
+    </select>
+
+
+    <update id="updateCasualPoininspection" parameterType="com.ztman.business.inspection.client.entity.CasualPoininspection">
+        update casual_point_inspection
+        <trim prefix="SET" suffixOverrides=",">
+                                                                            <if test="tenantId != null  and tenantId != ''  ">tenant_id = #{tenantId},</if>
+                                                                <if test="doUserId != null  and doUserId != ''  ">do_user_id = #{doUserId},</if>
+                                                                <if test="doUserName != null  and doUserName != ''  ">do_user_name = #{doUserName},</if>
+                                                                <if test="status != null  and status != ''  ">status = #{status},</if>
+                                                                <if test="equipmentName != null  and equipmentName != ''  ">equipment_name = #{equipmentName},</if>
+                                                                <if test="equipmentId != null  and equipmentId != ''  ">equipment_id = #{equipmentId},</if>
+                                                                <if test="address != null  and address != ''  ">address = #{address},</if>
+                                                                <if test="groupId != null  and groupId != ''  ">group_id = #{groupId},</if>
+                                                                <if test="createTime != null  ">create_time = #{createTime},</if>
+                                    </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCasualPoininspectionById" parameterType="Integer">
+        delete from casual_point_inspection where id = #{id}
+    </delete>
+
+    <delete id="deleteCasualPoininspectionByIds" parameterType="String">
+        delete from casual_point_inspection where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <!-- 新增对象 -->
+    <insert id="insertCasualPoininspection" parameterType="com.ztman.business.inspection.client.entity.CasualPoininspection">
+        insert into casual_point_inspection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                <if test="id != null and id != '' ">id,</if>
+                                                                <if test="tenantId != null  and tenantId != ''  ">tenant_id,</if>
+                                                                <if test="doUserId != null  and doUserId != ''  ">do_user_id,</if>
+                                                                <if test="doUserName != null  and doUserName != ''  ">do_user_name,</if>
+                                                                <if test="status != null  and status != ''  ">status,</if>
+                                                                <if test="equipmentName != null  and equipmentName != ''  ">equipment_name,</if>
+                                                                <if test="equipmentId != null  and equipmentId != ''  ">equipment_id,</if>
+                                                                <if test="address != null  and address != ''  ">address,</if>
+                                                                <if test="groupId != null  and groupId != ''  ">group_id,</if>
+                                                                <if test="createTime != null  ">create_time,</if>
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                                <if test="id != null  ">#{id},</if>
+                                                                <if test="tenantId != null  and tenantId != ''  ">#{tenantId},</if>
+                                                                <if test="doUserId != null  and doUserId != ''  ">#{doUserId},</if>
+                                                                <if test="doUserName != null  and doUserName != ''  ">#{doUserName},</if>
+                                                                <if test="status != null  and status != ''  ">#{status},</if>
+                                                                <if test="equipmentName != null  and equipmentName != ''  ">#{equipmentName},</if>
+                                                                <if test="equipmentId != null  and equipmentId != ''  ">#{equipmentId},</if>
+                                                                <if test="address != null  and address != ''  ">#{address},</if>
+                                                                <if test="groupId != null  and groupId != ''  ">#{groupId},</if>
+                                                                <if test="createTime != null  ">#{createTime},</if>
+                                    </trim>
+    </insert>
+
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+                    id,  <!-- id -->
+                    tenant_id,  <!-- 租户ID -->
+                    do_user_id,  <!-- 检查人ID -->
+                    do_user_name,  <!-- 检查人姓名 -->
+                    status,  <!-- 点检状态（0正常 1异常） -->
+                    equipment_name,  <!-- 设备名称 -->
+                    equipment_id,  <!-- 设备编号 -->
+                    address,  <!-- 地点 -->
+                    group_id,  <!-- 附件组ID -->
+                    create_time  <!-- 创建时间 -->
+            </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+                                            <if test="id != null and id != '' ">
+                        AND id = #{id}  <!-- id -->
+        </if>
+                                            <if test="tenantId != null and tenantId != ''">
+                        AND tenant_id = #{tenantId}  <!-- 租户ID -->
+        </if>
+                                            <if test="doUserId != null and doUserId != ''">
+                        AND do_user_id = #{doUserId}  <!-- 检查人ID -->
+        </if>
+                                            <if test="doUserName != null and doUserName != ''">
+                        AND do_user_name = #{doUserName}  <!-- 检查人姓名 -->
+        </if>
+                                            <if test="status != null and status != ''">
+                        AND status = #{status}  <!-- 点检状态（0正常 1异常） -->
+        </if>
+                                            <if test="equipmentName != null and equipmentName != ''">
+                        AND equipment_name = #{equipmentName}  <!-- 设备名称 -->
+        </if>
+                                            <if test="equipmentId != null and equipmentId != ''">
+                        AND equipment_id = #{equipmentId}  <!-- 设备编号 -->
+        </if>
+                                            <if test="address != null and address != ''">
+                        AND address = #{address}  <!-- 地点 -->
+        </if>
+                                            <if test="groupId != null and groupId != ''">
+                        AND group_id = #{groupId}  <!-- 附件组ID -->
+        </if>
+                                            <if test="createTime != null ">
+                        AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+            </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+                                                                 <if test="tenantId != null and tenantId != ''">
+                    AND tenant_id like '%${tenantId}%'  <!-- 租户ID -->
+         </if>
+                                                 <if test="doUserId != null and doUserId != ''">
+                    AND do_user_id like '%${doUserId}%'  <!-- 检查人ID -->
+         </if>
+                                                 <if test="doUserName != null and doUserName != ''">
+                    AND do_user_name like '%${doUserName}%'  <!-- 检查人姓名 -->
+         </if>
+                                                 <if test="status != null and status != ''">
+                    AND status like '%${status}%'  <!-- 点检状态（0正常 1异常） -->
+         </if>
+                                                 <if test="equipmentName != null and equipmentName != ''">
+                    AND equipment_name like '%${equipmentName}%'  <!-- 设备名称 -->
+         </if>
+                                                 <if test="equipmentId != null and equipmentId != ''">
+                    AND equipment_id like '%${equipmentId}%'  <!-- 设备编号 -->
+         </if>
+                                                 <if test="address != null and address != ''">
+                    AND address like '%${address}%'  <!-- 地点 -->
+         </if>
+                                                 <if test="groupId != null and groupId != ''">
+                    AND group_id like '%${groupId}%'  <!-- 附件组ID -->
+         </if>
+                                                    </sql>
+</mapper>

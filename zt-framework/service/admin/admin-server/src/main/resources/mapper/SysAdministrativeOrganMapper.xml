@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysAdministrativeOrganMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.SysAdministrativeOrgan" id="sysAdministrativeOrganResult">
+        <result property="organId" column="organ_id"/> <!--  -->
+        <result property="name" column="name"/> <!-- 名称 -->
+        <result property="code" column="code"/> <!-- 编码 -->
+        <result property="adminname" column="adminName"/> <!-- 负责人 -->
+        <result property="phone" column="phone"/> <!-- 负责人联系方式 -->
+        <result property="createId" column="create_id"/> <!-- 创建人id -->
+        <result property="createTime" column="create_time"/> <!-- 创建时间 -->
+        <result property="remark" column="remark"/> <!-- 备注 -->
+        <result property="comId" column="com_id"/> <!-- 所属公司 -->
+        <result property="ext1" column="ext1"/> <!--  -->
+        <result property="ext2" column="ext2"/> <!--  -->
+        <result property="ext3" column="ext3"/> <!--  -->
+        <result property="ext4" column="ext4"/> <!--  -->
+        <result property="ext5" column="ext5"/> <!--  -->
+    </resultMap>
+
+
+    <sql id="selectSysAdministrativeOrganVo">
+        select organ_id, name, code, adminName, del_flag, parent_name, phone, create_id, create_time, remark, com_id, ext1, ext2, ext3, ext4, ext5 from sys_administrative_organ
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysAdministrativeOrganList" parameterType="SysAdministrativeOrgan"
+            resultMap="sysAdministrativeOrganResult">
+        <include refid="selectSysAdministrativeOrganVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysAdministrativeOrganListByLike" parameterType="SysAdministrativeOrgan"
+            resultType="com.ztman.admin.api.vo.AdministrativeOrganVO">
+        select
+        ao.organ_id,
+        ao.name,
+        ao.code,
+        ao.adminName,
+        ao.phone,
+        u.user_realname as create_nmae,
+        ao.create_time,
+        ao.remark,
+        ao.com_id,
+        com.name as com_name,
+        ao.del_flag,
+        ao.ext1,
+        ao.ext2,
+        ao.ext3,
+        ao.ext4,
+        ao.ext5
+        from
+        sys_administrative_organ as ao
+        LEFT JOIN
+        sys_user u
+        ON
+        ao.create_id = u.user_id
+        LEFT JOIN
+        sys_company as com
+        ON
+        com.com_id = ao.com_id
+        where
+        ao.del_flag = 1
+        <if test="name != null and name != ''">
+            AND ao.name like '%${name}%'  <!-- 名称 -->
+            OR aa.code like '%${name}%'  <!-- 行政区域 -->
+        </if>
+        <if test="comId != null and comId != ''">
+            and ao.com_id = #{comId}
+        </if>
+        <if test="code != null and code != ''">
+            AND ao.code like '%${code}%'  <!-- 编码 -->
+        </if>
+        <if test="adminname != null and adminname != ''">
+            AND ao.adminName like '%${adminname}%'  <!-- 负责人 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND ao.phone like '%${phone}%'  <!-- 负责人联系方式 -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND ao.remark like '%${remark}%'  <!-- 备注 -->
+        </if>
+        <if test="ext1 != null and ext1 != ''">
+            AND ao.ext1 like '%${ext1}%'  <!--  -->
+        </if>
+        <if test="ext2 != null and ext2 != ''">
+            AND ao.ext2 like '%${ext2}%'  <!--  -->
+        </if>
+        <if test="ext3 != null and ext3 != ''">
+            AND ao.ext3 like '%${ext3}%'  <!--  -->
+        </if>
+        <if test="ext4 != null and ext4 != ''">
+            AND ao.ext4 like '%${ext4}%'  <!--  -->
+        </if>
+        <if test="ext5 != null and ext5 != ''">
+            AND ao.ext5 like '%${ext5}%'  <!--  -->
+        </if>
+    </select>
+
+
+    <select id="selectSysAdministrativeOrganListByLikeAndTenant" parameterType="SysAdministrativeOrgan"
+            resultType="com.ztman.admin.api.vo.AdministrativeOrganVO">
+        select
+        ao.organ_id,
+        ao.name,
+        ao.code,
+        ao.adminName,
+        ao.phone,
+        u.user_realname as create_nmae,
+        ao.create_time,
+        ao.remark,
+        ao.com_id,
+        com.name as com_name,
+        ao.del_flag,
+        ao.ext1,
+        ao.ext2,
+        ao.ext3,
+        ao.ext4,
+        ao.ext5
+        from
+        sys_administrative_organ as ao
+        LEFT JOIN
+        sys_user u
+        ON
+        ao.create_id = u.user_id
+        LEFT JOIN
+        sys_company as com
+        ON
+        com.com_id = ao.com_id
+        where
+        ao.del_flag = 1
+        AND ao.com_id in (${companyId == null ? "null" : companyId })  <!-- 企业ids -->
+        <if test="name != null and name != ''">
+            AND ao.name like '%${name}%'  <!-- 名称 -->
+            OR ao.code like '%${name}%'  <!-- 编码 -->
+        </if>
+        <if test="comId != null and comId != ''">
+            and ao.com_id = #{comId}
+        </if>
+        <if test="adminname != null and adminname != ''">
+            AND ao.adminName like '%${adminname}%'  <!-- 负责人 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND ao.phone like '%${phone}%'  <!-- 负责人联系方式 -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND ao.remark like '%${remark}%'  <!-- 备注 -->
+        </if>
+        <if test="ext1 != null and ext1 != ''">
+            AND ao.ext1 like '%${ext1}%'  <!--  -->
+        </if>
+        <if test="ext2 != null and ext2 != ''">
+            AND ao.ext2 like '%${ext2}%'  <!--  -->
+        </if>
+        <if test="ext3 != null and ext3 != ''">
+            AND ao.ext3 like '%${ext3}%'  <!--  -->
+        </if>
+        <if test="ext4 != null and ext4 != ''">
+            AND ao.ext4 like '%${ext4}%'  <!--  -->
+        </if>
+        <if test="ext5 != null and ext5 != ''">
+            AND ao.ext5 like '%${ext5}%'  <!--  -->
+        </if>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysAdministrativeOrganById" parameterType="Integer" resultType="com.ztman.admin.api.vo.AdministrativeOrganVO">
+        select
+        ao.organ_id,
+        ao.name,
+        ao.code,
+        ao.adminName,
+        ao.phone,
+        u.user_realname as create_nmae,
+        ao.create_time,
+        ao.remark,
+        ao.com_id,
+        com.name as com_name,
+        ao.del_flag,
+        ao.ext1,
+        ao.ext2,
+        ao.ext3,
+        ao.ext4,
+        ao.ext5
+        from
+        sys_administrative_organ as ao
+        LEFT JOIN
+        sys_user u
+        ON
+        ao.create_id = u.user_id
+        LEFT JOIN
+        sys_company as com
+        ON
+        com.com_id = ao.com_id
+        where ao.organ_id = #{organId}
+    </select>
+
+    <select id="list" parameterType="SysAdministrativeOrgan" resultType="java.util.HashMap">
+        select
+        organ_id,
+        `name`
+        from
+        sys_administrative_organ
+        where
+        del_flag = 1
+        <if test="companyId != null and companyId != '' or role == 'user'">
+           and com_id in (${companyId == null ? 'null' : companyId})
+        </if>
+    </select>
+
+    <select id="findSysAdministrativeOrganByCode" resultType="SysAdministrativeOrgan">
+        select * from sys_administrative_organ where code = #{code} and del_flag = 1
+    </select>
+
+    <select id="inputList" resultType="java.util.HashMap">
+        select
+        organ_id,
+        `name`
+        from
+        sys_administrative_organ
+        where
+        del_flag = 1
+        and com_id = #{comId}
+    </select>
+
+    <select id="selectCompanyIdsByUserId" resultType="java.lang.Integer">
+        SELECT
+        c.com_id
+        FROM
+        sys_tenant as t
+        INNER JOIN
+        sys_company as c
+        ON
+        c.tenant_id = t.tenant_id
+        WHERE
+        t.admin = #{userId}
+        and
+        t.del_flag = 1
+    </select>
+
+
+    <update id="updateSysAdministrativeOrgan" parameterType="SysAdministrativeOrgan">
+        update sys_administrative_organ
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="code != null  and code != ''  ">code = #{code},</if>
+            <if test="adminname != null  and adminname != ''  ">adminName = #{adminname},</if>
+            <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
+            <if test="createId != null  ">create_id = #{createId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="delFlag != null  ">del_flag = #{delFlag},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="comId != null  ">com_id = #{comId},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="ext3 != null  and ext3 != ''  ">ext3 = #{ext3},</if>
+            <if test="ext4 != null  and ext4 != ''  ">ext4 = #{ext4},</if>
+            <if test="ext5 != null  and ext5 != ''  ">ext5 = #{ext5},</if>
+        </trim>
+        where organ_id = #{organId}
+    </update>
+
+    <update id="deleteSysAdministrativeOrganById" parameterType="Integer">
+        update sys_administrative_organ set del_flag = 0 where organ_id = #{organId}
+    </update>
+
+    <delete id="deleteSysAdministrativeOrganByIds" parameterType="String">
+        delete from sys_administrative_organ where organ_id in
+        <foreach item="organId" collection="array" open="(" separator="," close=")">
+            #{organId}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSysAdministrativeOrgan" parameterType="SysAdministrativeOrgan">
+        insert into sys_administrative_organ
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="organId != null  ">organ_id,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="code != null  and code != ''  ">code,</if>
+            <if test="adminname != null  and adminname != ''  ">adminName,</if>
+            <if test="phone != null  and phone != ''  ">phone,</if>
+            <if test="createId != null  ">create_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="delFlag != null  ">del_flag,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="comId != null  ">com_id,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="ext3 != null  and ext3 != ''  ">ext3,</if>
+            <if test="ext4 != null  and ext4 != ''  ">ext4,</if>
+            <if test="ext5 != null  and ext5 != ''  ">ext5,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="organId != null  ">#{organId},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="code != null  and code != ''  ">#{code},</if>
+            <if test="adminname != null  and adminname != ''  ">#{adminname},</if>
+            <if test="phone != null  and phone != ''  ">#{phone},</if>
+            <if test="createId != null  ">#{createId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="delFlag != null  ">#{delFlag},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="comId != null  ">#{comId},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="ext3 != null  and ext3 != ''  ">#{ext3},</if>
+            <if test="ext4 != null  and ext4 != ''  ">#{ext4},</if>
+            <if test="ext5 != null  and ext5 != ''  ">#{ext5},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        organ_id,  <!--  -->
+        name,  <!-- 名称 -->
+        parent_id,  <!-- 父级id -->
+        code,  <!-- 编码 -->
+        adminName,  <!-- 负责人 -->
+        phone,  <!-- 负责人联系方式 -->
+        create_id,  <!-- 创建人id -->
+        create_time,  <!-- 创建时间 -->
+        remark,  <!-- 备注 -->
+        com_id,  <!-- 所属公司 -->
+        del_flag,  <!-- 所属区域 -->
+        ext1,  <!--  -->
+        ext2,  <!--  -->
+        ext3,  <!--  -->
+        ext4,  <!--  -->
+        ext5  <!--  -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="organId != null ">
+            AND organ_id = #{organId}  <!--  -->
+        </if>
+        <if test="name != null and name != ''">
+            AND name = #{name}  <!-- 名称 -->
+        </if>
+        <if test="code != null and code != ''">
+            AND code = #{code}  <!-- 编码 -->
+        </if>
+        <if test="adminname != null and adminname != ''">
+            AND adminName = #{adminname}  <!-- 负责人 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND phone = #{phone}  <!-- 负责人联系方式 -->
+        </if>
+        <if test="createId != null ">
+            AND create_id = #{createId}  <!-- 创建人id -->
+        </if>
+        <if test="createTime != null ">
+            AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND remark = #{remark}  <!-- 备注 -->
+        </if>
+        <if test="comId != null ">
+            AND com_id = #{comId}  <!-- 所属公司 -->
+        </if>
+        <if test="ext1 != null and ext1 != ''">
+            AND ext1 = #{ext1}  <!--  -->
+        </if>
+        <if test="ext2 != null and ext2 != ''">
+            AND ext2 = #{ext2}  <!--  -->
+        </if>
+        <if test="ext3 != null and ext3 != ''">
+            AND ext3 = #{ext3}  <!--  -->
+        </if>
+        <if test="ext4 != null and ext4 != ''">
+            AND ext4 = #{ext4}  <!--  -->
+        </if>
+        <if test="ext5 != null and ext5 != ''">
+            AND ext5 = #{ext5}  <!--  -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="name != null and name != ''">
+            AND name like '%${name}%'  <!-- 名称 -->
+        </if>
+        <if test="code != null and code != ''">
+            AND code like '%${code}%'  <!-- 编码 -->
+        </if>
+        <if test="adminname != null and adminname != ''">
+            AND adminName like '%${adminname}%'  <!-- 负责人 -->
+        </if>
+        <if test="phone != null and phone != ''">
+            AND phone like '%${phone}%'  <!-- 负责人联系方式 -->
+        </if>
+        <if test="remark != null and remark != ''">
+            AND remark like '%${remark}%'  <!-- 备注 -->
+        </if>
+        <if test="ext1 != null and ext1 != ''">
+            AND ext1 like '%${ext1}%'  <!--  -->
+        </if>
+        <if test="ext2 != null and ext2 != ''">
+            AND ext2 like '%${ext2}%'  <!--  -->
+        </if>
+        <if test="ext3 != null and ext3 != ''">
+            AND ext3 like '%${ext3}%'  <!--  -->
+        </if>
+        <if test="ext4 != null and ext4 != ''">
+            AND ext4 like '%${ext4}%'  <!--  -->
+        </if>
+        <if test="ext5 != null and ext5 != ''">
+            AND ext5 like '%${ext5}%'  <!--  -->
+        </if>
+    </sql>
+</mapper>

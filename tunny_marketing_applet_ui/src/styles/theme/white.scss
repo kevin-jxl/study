@@ -1,0 +1,192 @@
+.asideWhite{
+  .avue-tabs{
+    .top{
+      .top-title{
+        .top_icons{
+          .logo_title{
+            color: #161716;
+          }
+          .top_icon{
+            i{
+              color:#161716;
+            }
+          }
+        }
+      }
+      .top-button{
+
+      }
+    }
+  }
+  .el-container{
+    .aside_menu{
+      border-right: 1px solid #d3d6df;
+      background-color: #ffffff;
+      .avue-sidebar{
+        background-color: #ffffff;
+        .el-menu{
+          background-color: #ffffff !important;
+          .menu-wrapper{
+            .el-menu-item{
+              background-color: #ffffff !important;
+              color: #2d2e2d !important;
+              &:hover{
+                color: #3a8ee6 !important;
+                i{
+                  color: #3a8ee6;
+                }
+              }
+            }
+            .el-submenu{
+              background-color: #ffffff !important;
+              color: #2d2e2d !important;
+              .el-submenu__title{
+                background-color: #ffffff !important;
+                color: #2d2e2d !important;
+                &:hover{
+                  color: #3a8ee6 !important;
+                  i{
+                    color: #3a8ee6;
+                  }
+                }
+              }
+              .el-menu{
+                background-color: #eaeef1 !important;
+                .el-menu-item{
+                  background-color: #eaeef1 !important;
+                  &:hover{
+                    color: #3a8ee6 !important;
+                  }
+                }
+              }
+            }
+            .is-active{
+              color: #3a8ee6 !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.whiteAsideMenu{
+  //background-color: #3a8ee6;
+  .el-menu{
+    background-color: #eaeef1 !important;
+    .el-menu-item{
+      background-color: #eaeef1 !important;
+      color:#2d2e2d !important;
+      &:hover{
+        color: #3a8ee6 !important;
+      }
+    }
+    .is-active{
+      color: #3a8ee6 !important;
+    }
+  }
+}
+
+.topWhite{
+  .avue-tabs{
+    .top{
+      .top-title{
+        .top_icons{
+          .logo_title{
+            color: #161716;
+          }
+          .top_icon{
+            i{
+              color:#161716;
+            }
+          }
+        }
+        .top_menu{
+          .el-menu{
+            .menu_items{
+              .el-menu-item{
+                &:focus{
+                  background-color: #ffffff;
+                }
+                &:hover{
+                  background-color: #ffffff;
+                  color: #3a8ee6;
+                  i{
+                    color: #3a8ee6;
+                  }
+                }
+              }
+              .el-submenu{
+                .el-submenu__title{
+                  &:focus{
+                    background-color: #ffffff;
+                  }
+                  &:hover{
+                    background-color: #ffffff;
+                    color: #3a8ee6;
+                    i{
+                      color: #3a8ee6;
+                    }
+                  }
+                }
+              }
+              .is-active{
+                color: #3a8ee6;
+                border-bottom: 1px solid #3a8ee6;
+                .el-submenu__title{
+                  color: #3a8ee6;
+                  height: 48px;
+                  i{
+                    color: #3a8ee6;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      .top-button{
+
+      }
+    }
+  }
+}
+.whiteMenu{
+  background-color: #eaeef2;
+  .el-menu{
+    background-color: #eaeef2 !important;
+    .menu_items{
+      background-color: #eaeef2 !important;
+      .el-menu-item{
+        background-color: #eaeef2 !important;
+        color: #545656 !important;
+        &:hover{
+          color: #3a8ee6!important;
+        }
+      }
+      .el-submenu{
+        .el-submenu__title{
+          background-color: #eaeef2 !important;
+          color: #545656 !important;
+          i{
+            color: #545656 !important;
+          }
+          &:hover{
+            color: #3a8ee6!important;
+            i{
+              color: #3a8ee6!important;
+            }
+          }
+        }
+      }
+      .is-active{
+        color: #3a8ee6 !important;
+        .el-submenu__title{
+          color: #3a8ee6 !important;
+          i{
+            color: #3a8ee6 !important;
+          }
+        }
+      }
+    }
+  }
+}

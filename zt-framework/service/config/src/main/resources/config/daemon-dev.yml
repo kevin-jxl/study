@@ -1,0 +1,53 @@
+## spring security 配置
+security:
+  oauth2:
+    client:
+      client-id: daemon
+      client-secret: daemon
+      scope: server
+
+## 定时任务
+spring:
+  # 保存定时任务的数据源
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 1qaz!QAZ
+    url: jdbc:mysql://spark-mysql:3306/ztframework?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+  elasticjob:
+    # 分布式任务协调依赖zookeeper
+    zookeeper:
+      server-lists: 127.0.0.1:2181
+      namespace: daemon
+    # 普通任务
+    simples:
+      spring-simple-job:
+        job-class: SparkSimpleJob
+        cron: 0 0 0/1 * * ?
+        sharding-total-count: 3
+        sharding-item-parameters: 0=service1,1=service2,2=service3
+        eventTraceRdbDataSource: 'dataSource'
+        listener:
+          listener-class: SparkElasticJobListener
+      spring-simple-job2:
+        job-class: SparkSimpleJob2
+        cron: 0 0 0/1 * * ?
+        sharding-total-count: 3
+        sharding-item-parameters: 0=service1,1=service2,2=service3
+        eventTraceRdbDataSource: 'dataSource'
+        listener:
+          listener-class: SparkElasticJobListener
+    # 简单任务
+    dataflows:
+      spring-dataflow-job:
+        job-class: SparkDataflowJob
+        cron: 0 0 0/1 * * ?
+        sharding-total-count: 3
+        sharding-item-parameters: 0=service1,1=service2,2=service3
+        streaming-process: true
+        eventTraceRdbDataSource: 'dataSource'
+        listener:
+          distributed-listener-class: SparkDistributeElasticJobListener
+          started-timeout-milliseconds: 5000
+          completed-timeout-milliseconds: 10000

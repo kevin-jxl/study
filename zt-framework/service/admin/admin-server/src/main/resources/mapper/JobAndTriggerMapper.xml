@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.JobAndTriggerMapper">
+
+
+	<!-- JOB对象结果集 -->
+	<resultMap id="jobResultMap" type="com.ztman.admin.api.entity.JobAndTrigger">
+		<result column="job_name" property="jobName"/>
+		<result column="job_group" property="jobGroup"/>
+		<result column="job_class_name" property="jobClassName"/>
+		<result column="description" property="description"/>
+		<result column="trigger_name" property="triggerName"/>
+		<result column="trigger_group" property="triggerGroup"/>
+		<result column="cron_expression" property="cronExpression"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="prev_fire_time" property="prevFireTime"/>
+		<result column="next_fire_time" property="nextFireTime"/>
+		<result column="trigger_state" property="triggerState"/>
+		<result column="time_zone_id" property="timeZoneId"/>
+		<result column="alarm_id" property="id"/>
+		<result column="is_alarm" property="isAlarm"/>
+		<result column="alarm_phones" property="alarmPhones"/>
+		<result column="alarm_mails" property="alarmMails"/>
+
+	</resultMap>
+
+    <select id="getJobAndTriggerDetails" resultMap="jobResultMap" parameterType="String">
+			SELECT
+			job_job_details.job_name , -- 任务名称
+			job_job_details.job_group,-- 任务分组
+			job_job_details.job_class_name,-- 任务执行类名
+			job_job_details.description ,-- 任务的描述:任务名称
+			job_triggers.trigger_name,-- 触发器名称
+			job_triggers.trigger_group,-- 触发器分组
+			job_cron_triggers.cron_expression, -- 任务执行表达式
+			job_triggers.start_time,-- 任务开始时间
+			job_triggers.end_time,-- 任务结束时间
+			job_triggers.prev_fire_time, -- 上次执行时间
+			job_triggers.next_fire_time, -- 上次执行时间
+			job_triggers.trigger_state,-- 任务当前状态
+			job_cron_triggers.time_zone_id, --  时区
+			job_alarm_config.id as alarm_id, -- job 配置主键
+			job_alarm_config.is_alarm, -- 是否通知
+			job_alarm_config.alarm_phones, -- 通知的电话
+			job_alarm_config.alarm_mails -- 通知的邮箱
+			FROM
+			job_job_details
+			JOIN job_triggers
+			JOIN job_cron_triggers ON (job_job_details.JOB_NAME = job_triggers.JOB_NAME
+			AND job_triggers.TRIGGER_NAME = job_cron_triggers.TRIGGER_NAME
+			AND job_triggers.TRIGGER_GROUP = job_cron_triggers.TRIGGER_GROUP)
+			LEFT  JOIN job_alarm_config ON job_job_details.JOB_NAME=job_alarm_config.job_name
+
+		WHERE 1=1
+			<if test="description != null and description != ''">
+				and `job_job_details`.description LIKE CONCAT('%',#{description},'%')
+			</if>
+    </select>
+	<!--根据任务类名查找-->
+	<select id="getJobByClassName" resultMap="jobResultMap" parameterType="String">
+				SELECT
+			job_job_details.job_name , -- 任务名称
+			job_job_details.job_group,-- 任务分组
+			job_job_details.job_class_name,-- 任务执行类名
+			job_job_details.description ,-- 任务的描述:任务名称
+			job_triggers.trigger_name,-- 触发器名称
+			job_triggers.trigger_group,-- 触发器分组
+			job_cron_triggers.cron_expression, -- 任务执行表达式
+			job_triggers.start_time,-- 任务开始时间
+			job_triggers.end_time,-- 任务结束时间
+			job_triggers.prev_fire_time, -- 上次执行时间
+			job_triggers.next_fire_time, -- 上次执行时间
+			job_triggers.trigger_state,-- 任务当前状态
+			job_cron_triggers.time_zone_id, --  时区
+			job_alarm_config.id as alarm_id, -- job 配置主键
+			job_alarm_config.is_alarm, -- 是否通知
+			job_alarm_config.alarm_phones, -- 通知的电话
+			job_alarm_config.alarm_mails -- 通知的邮箱
+			FROM
+			job_job_details
+			JOIN job_triggers
+			JOIN job_cron_triggers ON (job_job_details.JOB_NAME = job_triggers.JOB_NAME
+			AND job_triggers.TRIGGER_NAME = job_cron_triggers.TRIGGER_NAME
+			AND job_triggers.TRIGGER_GROUP = job_cron_triggers.TRIGGER_GROUP)
+			LEFT  JOIN job_alarm_config ON job_job_details.JOB_NAME=job_alarm_config.job_name
+			WHERE 1=1
+			<if test="jobClassName != null and jobClassName != ''">
+				and `job_job_details`.job_class_name LIKE CONCAT('%',#{jobClassName},'%')
+			</if>
+	</select>
+
+</mapper>

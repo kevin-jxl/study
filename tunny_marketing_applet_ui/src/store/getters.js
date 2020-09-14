@@ -1,0 +1,26 @@
+const getters = {
+  tag: state => state.tags.tag,
+  website: state => state.common.website,
+  theme: state => state.common.theme,
+  themeName: state => state.common.themeName,
+  cacheControl: state => state.common.cacheControl,
+  isCollapse: state => state.common.isCollapse,
+  isLock: state => state.common.isLock,
+  isFullScren: state => state.common.isFullScren,
+  isLoading: state => state.common.isLoading,
+  isTags: state => state.common.isTags,
+  menuType: state => state.common.menuType,
+  lockPasswd: state => state.common.lockPasswd,
+  tagList: state => state.tags.tagList,
+  tagCurrent: state => state.tags.tagCurrent,
+  tagWel: state => state.tags.tagWel,
+  access_token: state => state.user.access_token,
+  refresh_token: state => state.user.refresh_token,
+  roles: state => state.user.roles,
+  userInfo: state => state.user.userInfo,
+  permissions: state => state.user.permissions,
+  menu: state => state.user.menu,
+  menus: state => state.user.menus,
+  errLog: state => state.errLog.errLog
+}
+export default getters

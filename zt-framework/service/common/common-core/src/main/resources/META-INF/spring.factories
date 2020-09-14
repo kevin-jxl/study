@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.ztman.common.core.config.JacksonConfig,\
+  com.ztman.common.core.config.RedisConfig,\
+  com.ztman.common.core.config.RestTemplateConfig,\
+  com.ztman.common.core.util.SpringContextHolder

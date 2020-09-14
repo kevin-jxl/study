@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.ztman</groupId>
+		<artifactId>common</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>common-swagger</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+	<name>common-swagger</name>
+	<description> 接口文档</description>
+
+
+	<dependencies>
+		<!--安全模块支持swagger security-->
+		<dependency>
+			<groupId>com.ztman</groupId>
+			<artifactId>common-security</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!--server-api-->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!--swagger 依赖-->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
+	</build>
+	<properties>
+		<!--自定义默认的编码格式-->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!--自定义默认的时间格式 年-月-日-时-分-->
+		<maven.build.timestamp.format>
+			yyyy-MM-dd_HH_mm
+		</maven.build.timestamp.format>
+	</properties>
+</project>

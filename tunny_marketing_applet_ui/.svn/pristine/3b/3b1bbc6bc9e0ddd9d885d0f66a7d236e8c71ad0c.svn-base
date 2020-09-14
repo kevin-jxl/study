@@ -1,0 +1,133 @@
+.sidebar-container {
+    background: #535d62;
+    transition: width .6s ease-in;
+    &.is-active {
+        width: 64px !important;
+    }
+}
+
+.el-menu-item.is-active {
+    color: $mainBg;
+}
+.el-menu-item.is-active.siderbar-active{
+  color: #fff;
+}
+
+.nest-menu .el-submenu>.el-submenu__title,
+.el-submenu .el-menu-item {
+    background-color: #535d62 !important;
+    &:hover {
+        background: #00142a !important;
+    }
+}
+
+.el-menu--vertical{
+  max-height: 500px;
+  overflow: auto;
+  overflow-y: overlay;
+  .el-menu--popup{
+    min-width: 150px;
+  }
+}
+
+.avue-contail{
+  .avue-tabs{
+    .top{
+      .top-title{
+        .top_icons{
+
+        }
+      }
+      .top-button{
+
+      }
+    }
+  }
+  .el-container{
+    .aside_menu{
+      .el-menu{
+        .menu-wrapper{
+          .el-menu-item{
+            font-size: 13px;
+            padding:0 10px 0 20px !important;
+            font-weight: 700;
+            i{
+              margin-right: 5px;
+            }
+          }
+          .el-submenu{
+            .el-submenu__title{
+              font-size: 13px;
+              padding:0 10px 0 20px !important;
+              font-weight: 700;
+              i{
+                margin-right: 5px;
+              }
+              .el-submenu__icon-arrow{
+                left: 130px;
+                right: unset;
+              }
+            }
+            .el-menu{
+              .menu-wrapper{
+                .el-menu-item{
+                  min-width: 150px;
+                  padding:0 10px 0 20px !important;
+                  font-weight: normal;
+                }
+                .el-submenu{
+                  .el-submenu__title{
+                    font-size: 13px;
+                    padding:0 10px 0 40px !important;
+                    font-weight: 700;
+                    i{
+                      margin-right: 5px;
+                    }
+                    .el-submenu__icon-arrow{
+                      left: 130px;
+                      right: unset;
+                    }
+                  }
+                  .el-menu-item{
+                    min-width: 150px;
+                    padding:0 10px 0 40px !important;
+                    font-weight: normal;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .aside_collapse{
+      .el-menu{
+        .menu-wrapper{
+          .el-menu-item{
+            padding:0 10px 0 20px !important;
+            transition:padding 0.1s ease-in-out;
+            .el-tooltip{
+              //text-align: center;
+            }
+          }
+          .el-submenu{
+            .el-submenu__title{
+              padding:0 10px 0 20px !important;
+              transition:padding 0.1s ease-in-out;
+            }
+          }
+          .is-active{
+            color: #3a8ee6;
+            i{
+              color: #3a8ee6 !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+

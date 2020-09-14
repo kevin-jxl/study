@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.ztspark.mapper.ZdutyidPeopleidMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.ztspark.entity.company.ZdutyidPeopleid" id="zdutyidPeopleidResult">
+        <result property="dutyPeopleId" column="duty_people_id"/> <!--  -->
+        <result property="dutyId" column="duty_id"/> <!-- 值班id -->
+        <result property="peopleId" column="people_id"/> <!-- 人员id -->
+        <result property="dutyStartTime" column="duty_start_time"/> <!-- 人员id -->
+        <result property="dutyEndTime" column="duty_end_time"/> <!-- 人员id -->
+    </resultMap>
+
+
+    <sql id="selectZdutyidPeopleidVo">
+        select duty_people_id, duty_id, people_id,duty_start_time,duty_end_time from zt_dutyid_peopleid
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectZdutyidPeopleidList" parameterType="ZdutyidPeopleid" resultMap="zdutyidPeopleidResult">
+        <include refid="selectZdutyidPeopleidVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectZdutyidPeopleidListByLike" parameterType="ZdutyidPeopleid" resultMap="zdutyidPeopleidResult">
+        <include refid="selectZdutyidPeopleidVo"/>
+        <where>
+            <include refid="like"/>
+        </where>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectZdutyidPeopleidById" parameterType="Integer" resultMap="zdutyidPeopleidResult">
+        <include refid="selectZdutyidPeopleidVo"/>
+        where duty_people_id = #{dutyPeopleId}
+    </select>
+
+
+    <update id="updateZdutyidPeopleid" parameterType="ZdutyidPeopleid">
+        update zt_dutyid_peopleid
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dutyId != null  ">duty_id = #{dutyId},</if>
+            <if test="peopleId != null  ">people_id = #{peopleId},</if>
+            <if test="dutyStartTime != null  ">duty_start_time = #{dutyStartTime},</if>
+            <if test="dutyEndTime != null  ">duty_end_time = #{dutyEndTime},</if>
+        </trim>
+        where duty_people_id = #{dutyPeopleId}
+    </update>
+
+    <delete id="deleteZdutyidPeopleidById" parameterType="Integer">
+        delete from zt_dutyid_peopleid where duty_people_id = #{dutyPeopleId}
+    </delete>
+
+    <delete id="deleteZdutyidPeopleidByIds" parameterType="String">
+        delete from zt_dutyid_peopleid where duty_people_id in
+        <foreach item="dutyPeopleId" collection="array" open="(" separator="," close=")">
+            #{dutyPeopleId}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertZdutyidPeopleid" parameterType="ZdutyidPeopleid" useGeneratedKeys="true"
+            keyProperty="dutyPeopleId">
+        insert into zt_dutyid_peopleid
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dutyId != null  ">duty_id,</if>
+            <if test="peopleId != null  ">people_id,</if>
+            <if test="dutyStartTime != null  ">duty_start_time,</if>
+            <if test="dutyEndTime != null  ">duty_end_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dutyId != null  ">#{dutyId},</if>
+            <if test="peopleId != null  ">#{peopleId},</if>
+            <if test="dutyStartTime != null  ">#{dutyStartTime},</if>
+            <if test="dutyEndTime != null  ">#{dutyEndTime},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        duty_people_id,  <!--  -->
+        duty_id,  <!-- 值班id -->
+        people_id,  <!-- 人员id -->
+        duty_start_time,  <!-- 值班开始时间 -->
+        duty_end_time   <!-- 值班结束时间 -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="dutyPeopleId != null ">
+            AND duty_people_id = #{dutyPeopleId}  <!--  -->
+        </if>
+        <if test="dutyId != null ">
+            AND duty_id = #{dutyId}  <!-- 值班id -->
+        </if>
+        <if test="peopleId != null ">
+            AND people_id = #{peopleId}  <!-- 人员id -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+    </sql>
+</mapper>

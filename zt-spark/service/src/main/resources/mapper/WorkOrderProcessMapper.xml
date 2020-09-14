@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.ztspark.mapper.WorkOrderProcessMapper">
+
+	<!-- 通用返回对象 -->
+	<resultMap type="com.ztman.ztspark.entity.workorder.WorkOrderProcess"
+		id="workOrderProcessResult">
+		<result property="id" column="id" /> <!-- 编号 -->
+		<result property="workOrderId" column="work_order_id" /> <!-- 工单号 -->
+		<result property="tag" column="tag" /> <!-- 过程标识（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		<result property="tagName" column="tag_name" /> <!-- 过程标识名称（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		<result property="joinName" column="join_name" /> <!-- 该过程参与人姓名 -->
+		<result property="joinUserId" column="join_user_id" /> <!-- 该过程参与人用户id -->
+		<result property="operationTime" column="operation_time" /> <!-- 该过程操作时间 -->
+		<result property="note" column="note" /> <!-- 备注 -->
+	</resultMap>
+
+
+	<sql id="selectWorkOrderProcessVo">
+		select id, work_order_id, tag, tag_name, join_name, join_user_id,
+		operation_time, note from work_order_process
+	</sql>
+	<!-- 查询对象List -->
+	<select id="selectWorkOrderProcessList" parameterType="WorkOrderProcess"
+		resultMap="workOrderProcessResult">
+		<include refid="selectWorkOrderProcessVo" />
+		<where>
+			<include refid="equal" />
+		</where>
+	</select>
+
+	<!-- 模糊查询对象List -->
+	<select id="selectWorkOrderProcessListByLike" parameterType="WorkOrderProcess"
+		resultMap="workOrderProcessResult">
+		<include refid="selectWorkOrderProcessVo" />
+		<where>
+			<include refid="like" />
+		</where>
+	</select>
+
+	<!-- 根据主键查询对象 -->
+	<select id="selectWorkOrderProcessById" parameterType="Long"
+		resultMap="workOrderProcessResult">
+		<include refid="selectWorkOrderProcessVo" />
+		where id = #{id}
+	</select>
+
+
+	<update id="updateWorkOrderProcess" parameterType="WorkOrderProcess">
+		update work_order_process
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">work_order_id = #{workOrderId},</if>
+			<if test="tag != null  and tag != ''  ">tag = #{tag},</if>
+			<if test="tagName != null  and tagName != ''  ">tag_name = #{tagName},</if>
+			<if test="joinName != null  and joinName != ''  ">join_name = #{joinName},</if>
+			<if test="joinUserId != null  and joinUserId != ''  ">join_user_id = #{joinUserId},</if>
+			<if test="operationTime != null  ">operation_time = #{operationTime},</if>
+			<if test="note != null  and note != ''  ">note = #{note},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteWorkOrderProcessById" parameterType="Long">
+		delete from work_order_process where id = #{id}
+	</delete>
+
+	<delete id="deleteWorkOrderProcessByIds" parameterType="String">
+		delete from work_order_process where id in
+		<foreach item="id" collection="array" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+
+	<!-- 新增对象 -->
+	<insert id="insertWorkOrderProcess" parameterType="WorkOrderProcess"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into work_order_process
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">work_order_id,</if>
+			<if test="tag != null  and tag != ''  ">tag,</if>
+			<if test="tagName != null  and tagName != ''  ">tag_name,</if>
+			<if test="joinName != null  and joinName != ''  ">join_name,</if>
+			<if test="joinUserId != null  and joinUserId != ''  ">join_user_id,</if>
+			<if test="operationTime != null  ">operation_time,</if>
+			<if test="note != null  and note != ''  ">note,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="workOrderId != null  and workOrderId != ''  ">#{workOrderId},</if>
+			<if test="tag != null  and tag != ''  ">#{tag},</if>
+			<if test="tagName != null  and tagName != ''  ">#{tagName},</if>
+			<if test="joinName != null  and joinName != ''  ">#{joinName},</if>
+			<if test="joinUserId != null  and joinUserId != ''  ">#{joinUserId},</if>
+			<if test="operationTime != null  ">#{operationTime},</if>
+			<if test="note != null  and note != ''  ">#{note},</if>
+		</trim>
+	</insert>
+
+
+
+	<!-- 表字段 -->
+	<sql id="column">
+		id,  <!-- 编号 -->
+		work_order_id,  <!-- 工单号 -->
+		tag,  <!-- 过程标识（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		tag_name,  <!-- 过程标识名称（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		join_name,  <!-- 该过程参与人姓名 -->
+		join_user_id,  <!-- 该过程参与人用户id -->
+		operation_time,  <!-- 该过程操作时间 -->
+		note  <!-- 备注 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+		<if test="id != null ">
+			AND id = #{id}  <!-- 编号 -->
+		</if>
+		<if test="workOrderId != null and workOrderId != ''">
+			AND work_order_id = #{workOrderId}  <!-- 工单号 -->
+		</if>
+		<if test="tag != null and tag != ''">
+			AND tag = #{tag}  <!-- 过程标识（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		</if>
+		<if test="tagName != null and tagName != ''">
+			AND tag_name = #{tagName}  <!-- 过程标识名称（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		</if>
+		<if test="joinName != null and joinName != ''">
+			AND join_name = #{joinName}  <!-- 该过程参与人姓名 -->
+		</if>
+		<if test="joinUserId != null and joinUserId != ''">
+			AND join_user_id = #{joinUserId}  <!-- 该过程参与人用户id -->
+		</if>
+		<if test="operationTime != null ">
+			AND operation_time = #{operationTime}  <!-- 该过程操作时间 -->
+		</if>
+		<if test="note != null and note != ''">
+			AND note = #{note}  <!-- 备注 -->
+		</if>
+	</sql>
+
+	<!-- Where模糊匹配字段 -->
+	<sql id="like">
+		<if test="workOrderId != null and workOrderId != ''">
+			AND work_order_id like '%${workOrderId}%'  <!-- 工单号 -->
+		</if>
+		<if test="tag != null and tag != ''">
+			AND tag like '%${tag}%'  <!-- 过程标识（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		</if>
+		<if test="tagName != null and tagName != ''">
+			AND tag_name like '%${tagName}%'  <!-- 过程标识名称（1.已派遣 2.已受理 3.处置中 4.已完成 5.已关闭） -->
+		</if>
+		<if test="joinName != null and joinName != ''">
+			AND join_name like '%${joinName}%'  <!-- 该过程参与人姓名 -->
+		</if>
+		<if test="joinUserId != null and joinUserId != ''">
+			AND join_user_id like '%${joinUserId}%'  <!-- 该过程参与人用户id -->
+		</if>
+		<if test="note != null and note != ''">
+			AND note like '%${note}%'  <!-- 备注 -->
+		</if>
+	</sql>
+</mapper>

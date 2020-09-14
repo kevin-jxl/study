@@ -1,0 +1,71 @@
+.el-dropdown-menu__item {
+    font-size: 12px;
+    line-height: 28px;
+}
+
+.el-menu--horizontal {
+    border-bottom: none !important;
+}
+
+.el-menu {
+    border-right: 0 !important;
+}
+
+.el-loading-text {
+    text-align: center;
+}
+
+.el-menu--display,
+.el-menu--display+.el-submenu__icon-arrow {
+    display: none;
+}
+
+.el-breadcrumb__inner {
+  font-weight: 700;
+  text-decoration: none;
+  -webkit-transition: color .2s cubic-bezier(.645,.045,.355,1);
+  transition: color .2s cubic-bezier(.645,.045,.355,1);
+  color: #303133;
+}
+
+.el-breadcrumb__item:last-child .el-breadcrumb__inner,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner a,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
+.el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+  font-weight: 600 !important;
+  color: #4da6fb !important;
+  cursor: text;
+}
+
+.el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev{
+    padding:0 10px !important;
+}
+
+.el-form-item__label,
+.el-form-item__content,
+.el-input__inner,
+.el-cascader,
+.el-cascader-menu__item,
+.el-button,
+.el-popover,
+.el-radio__label,
+.el-checkbox__label,
+.el-select-dropdown__item,
+.el-pagination button, .el-pagination span:not([class*=suffix]),
+.el-pager li{
+  font-size: 12px !important;
+}
+
+.el-popper[x-placement^=bottom] {
+   margin-top: 5px;
+}
+
+.el-date-editor{
+  .el-range-input{
+    font-size: 12px;
+  }
+  .el-range-separator{
+    font-size: 12px;
+  }
+}
+

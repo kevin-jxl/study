@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.business.inspection.mapper.SmsCodeMapper">
+
+	<!-- 通用返回对象 -->
+    <resultMap type="com.ztman.business.inspection.client.entity.SmsCode" id="smsCodeResult">
+                        <result property="id" column="id"/> <!-- ID -->
+                        <result property="type" column="type"/> <!-- 验证码类型 -->
+                        <result property="phoneNumber" column="phone_number"/> <!-- 手机号 -->
+                        <result property="code" column="code"/> <!-- 代码 -->
+                        <result property="expiresTime" column="expires_time"/> <!-- 过期时间 -->
+                        <result property="createTime" column="create_time"/> <!-- 创建时间 -->
+            </resultMap>
+
+
+    <sql id="selectSmsCodeVo">
+        select id, type, phone_number, code, expires_time, create_time from sms_code
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSmsCodeList" parameterType="com.ztman.business.inspection.client.entity.SmsCode" resultMap="smsCodeResult">
+        <include refid="selectSmsCodeVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSmsCodeListByLike" parameterType="com.ztman.business.inspection.client.entity.SmsCode" resultMap="smsCodeResult">
+        <include refid="selectSmsCodeVo"/>
+        <where>
+            <include refid="like"/>
+        </where>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSmsCodeById" parameterType="Long" resultMap="smsCodeResult">
+        <include refid="selectSmsCodeVo"/>
+        where id = #{id}
+    </select>
+
+
+    <update id="updateSmsCode" parameterType="com.ztman.business.inspection.client.entity.SmsCode">
+        update sms_code
+        <trim prefix="SET" suffixOverrides=",">
+                                                                            <if test="type != null  and type != ''  ">type = #{type},</if>
+                                                                <if test="phoneNumber != null  and phoneNumber != ''  ">phone_number = #{phoneNumber},</if>
+                                                                <if test="code != null  and code != ''  ">code = #{code},</if>
+                                                                <if test="expiresTime != null  ">expires_time = #{expiresTime},</if>
+                                                                <if test="createTime != null  ">create_time = #{createTime},</if>
+                                    </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSmsCodeById" parameterType="Long">
+        delete from sms_code where id = #{id}
+    </delete>
+
+    <delete id="deleteSmsCodeByIds" parameterType="String">
+        delete from sms_code where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSmsCode" parameterType="com.ztman.business.inspection.client.entity.SmsCode" useGeneratedKeys="true" keyProperty="id">
+        insert into sms_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                                            <if test="type != null  and type != ''  ">type,</if>
+                                                                <if test="phoneNumber != null  and phoneNumber != ''  ">phone_number,</if>
+                                                                <if test="code != null  and code != ''  ">code,</if>
+                                                                <if test="expiresTime != null  ">expires_time,</if>
+                                                                <if test="createTime != null  ">create_time,</if>
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                                                            <if test="type != null  and type != ''  ">#{type},</if>
+                                                                <if test="phoneNumber != null  and phoneNumber != ''  ">#{phoneNumber},</if>
+                                                                <if test="code != null  and code != ''  ">#{code},</if>
+                                                                <if test="expiresTime != null  ">#{expiresTime},</if>
+                                                                <if test="createTime != null  ">#{createTime},</if>
+                                    </trim>
+    </insert>
+
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+                    id,  <!-- ID -->
+                    type,  <!-- 验证码类型 -->
+                    phone_number,  <!-- 手机号 -->
+                    code,  <!-- 代码 -->
+                    expires_time,  <!-- 过期时间 -->
+                    create_time  <!-- 创建时间 -->
+            </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+                                            <if test="id != null ">
+                        AND id = #{id}  <!-- ID -->
+        </if>
+                                            <if test="type != null and type != ''">
+                        AND type = #{type}  <!-- 验证码类型 -->
+        </if>
+                                            <if test="phoneNumber != null and phoneNumber != ''">
+                        AND phone_number = #{phoneNumber}  <!-- 手机号 -->
+        </if>
+                                            <if test="code != null and code != ''">
+                        AND code = #{code}  <!-- 代码 -->
+        </if>
+                                            <if test="expiresTime != null ">
+                        AND expires_time = #{expiresTime}  <!-- 过期时间 -->
+        </if>
+                                            <if test="createTime != null ">
+                        AND create_time = #{createTime}  <!-- 创建时间 -->
+        </if>
+            </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+                                                                 <if test="type != null and type != ''">
+                    AND type like '%${type}%'  <!-- 验证码类型 -->
+         </if>
+                                                 <if test="phoneNumber != null and phoneNumber != ''">
+                    AND phone_number like '%${phoneNumber}%'  <!-- 手机号 -->
+         </if>
+                                                 <if test="code != null and code != ''">
+                    AND code like '%${code}%'  <!-- 代码 -->
+         </if>
+                                                                                </sql>
+</mapper>

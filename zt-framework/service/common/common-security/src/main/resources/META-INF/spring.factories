@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.ztman.common.security.component.PermissionService,\
+com.ztman.common.security.component.SparkAccessDeniedHandler,\
+com.ztman.common.security.component.ResourceAuthExceptionEntryPoint,\
+com.ztman.common.security.feign.SparkFeignClientConfiguration,\
+com.ztman.common.security.social.QqSocialConfig,\
+com.ztman.common.security.social.WxSocialConfig

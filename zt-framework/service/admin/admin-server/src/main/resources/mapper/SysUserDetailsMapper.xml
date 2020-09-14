@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysUserDetailsMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.SysUserDetails" id="sysUserDetailsResult">
+        <result property="userId" column="user_id"/> <!--  -->
+        <result property="istrativeAreaId" column="istrative_area_id"/> <!-- 行政区域id -->
+        <result property="istrativeOrginId" column="istrative_orgin_id"/> <!--  -->
+        <result property="companyId" column="company_id"/> <!--  -->
+        <result property="postName" column="post_name"/> <!-- 职务名称（不关联，手动输入类型） -->
+    </resultMap>
+
+
+    <sql id="selectSysUserDetailsVo">
+        select user_id, istrative_area_id, istrative_orgin_id, company_id, post_name from sys_user_details
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysUserDetailsList" parameterType="SysUserDetails" resultMap="sysUserDetailsResult">
+        <include refid="selectSysUserDetailsVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysUserDetailsListByLike" parameterType="SysUserDetails" resultMap="sysUserDetailsResult">
+        <include refid="selectSysUserDetailsVo"/>
+        <where>
+            <include refid="like"/>
+        </where>
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysUserDetailsById" parameterType="Integer" resultMap="sysUserDetailsResult">
+        <include refid="selectSysUserDetailsVo"/>
+        where user_id = #{userId}
+    </select>
+
+
+    <update id="updateSysUserDetails" parameterType="SysUserDetails">
+        update sys_user_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="istrativeAreaId != null  ">istrative_area_id = #{istrativeAreaId},</if>
+            <if test="istrativeOrginId != null  ">istrative_orgin_id = #{istrativeOrginId},</if>
+            <if test="companyId != null  ">company_id = #{companyId},</if>
+            <if test="postName != null  and postName != ''  ">post_name = #{postName},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteSysUserDetailsById" parameterType="Integer">
+        delete from sys_user_details where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysUserDetailsByIds" parameterType="String">
+        delete from sys_user_details where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSysUserDetails" parameterType="SysUserDetails">
+        insert into sys_user_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null  ">user_id,</if>
+            <if test="istrativeAreaId != null  ">istrative_area_id,</if>
+            <if test="istrativeOrginId != null  ">istrative_orgin_id,</if>
+            <if test="companyId != null  ">company_id,</if>
+            <if test="postName != null  and postName != ''  ">post_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null  ">#{userId},</if>
+            <if test="istrativeAreaId != null  ">#{istrativeAreaId},</if>
+            <if test="istrativeOrginId != null  ">#{istrativeOrginId},</if>
+            <if test="companyId != null  ">#{companyId},</if>
+            <if test="postName != null  and postName != ''  ">#{postName},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        user_id,  <!--  -->
+        istrative_area_id,  <!-- 行政区域id -->
+        istrative_orgin_id,  <!--  -->
+        company_id,  <!--  -->
+        post_name  <!-- 职务名称（不关联，手动输入类型） -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="userId != null ">
+            AND user_id = #{userId}  <!--  -->
+        </if>
+        <if test="istrativeAreaId != null ">
+            AND istrative_area_id = #{istrativeAreaId}  <!-- 行政区域id -->
+        </if>
+        <if test="istrativeOrginId != null ">
+            AND istrative_orgin_id = #{istrativeOrginId}  <!--  -->
+        </if>
+        <if test="companyId != null ">
+            AND company_id = #{companyId}  <!--  -->
+        </if>
+        <if test="postName != null and postName != ''">
+            AND post_name = #{postName}  <!-- 职务名称（不关联，手动输入类型） -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="postName != null and postName != ''">
+            AND post_name like '%${postName}%'  <!-- 职务名称（不关联，手动输入类型） -->
+        </if>
+    </sql>
+</mapper>

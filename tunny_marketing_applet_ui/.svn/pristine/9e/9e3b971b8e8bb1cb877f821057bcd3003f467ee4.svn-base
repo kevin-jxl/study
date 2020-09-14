@@ -1,0 +1,113 @@
+.avue-main{
+  .el-table{
+    font-size: 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    .el-table__header-wrapper{
+      .has-gutter{
+        th{
+          padding:7px 0;
+          background-color: #f2f2f2;
+        }
+      }
+    }
+    .el-table__body-wrapper{
+      .el-table__row{
+        td{
+          padding:7px 0;
+        }
+      }
+    }
+    .el-table__fixed{
+      .el-table__fixed-header-wrapper{
+        .el-table__header{
+          th{
+            padding:7px 0;
+            background-color: #f2f2f2;
+          }
+        }
+      }
+      .el-table__fixed-body-wrapper{
+        .el-table__row{
+          td{
+            padding:7px 0;
+          }
+        }
+      }
+    }
+    .el-table__fixed-right{
+      .el-table__fixed-header-wrapper{
+        .el-table__header{
+          th{
+            padding:7px 0;
+            background-color: #f2f2f2;
+          }
+        }
+      }
+      .el-table__fixed-body-wrapper{
+        .el-table__row{
+          td{
+            padding:7px 0;
+          }
+        }
+      }
+    }
+    .cell{
+      line-height: 22px;
+      .el-button{
+        padding:0;
+      }
+    }
+  }
+
+  .basic_button{
+    border:1px solid #dcdfe6;
+    color:#6f6f70;
+    background-color: #ffffff;
+    &:hover,&:focus{
+      border:1px solid #dcdfe6;
+      color:#ffffff;
+      background-color: #6f6f70;
+    }
+  }
+  .controller_button{
+    border:1px solid #c2e7b0;
+    color:#7eca5c;
+    background-color: #f0f9eb;
+    &:hover,&:focus{
+      border:1px solid #c2e7b0;
+      color:#f0f9eb;
+      background-color: #7eca5c;
+    }
+  }
+  .bardian_button{
+    border:1px solid #dcdfe6;
+    color:#989ba0;
+    background-color: #f4f4f5;
+    &:hover,&:focus{
+      border:1px solid #dcdfe6;
+      color:#f4f4f5;
+      background-color: #989ba0;
+    }
+  }
+  .danger_button{
+    border:1px solid #fbc4c4;
+    color:#f67777;
+    background-color: #fef0f0;
+    &:hover,&:focus{
+      border:1px solid #fbc4c4;
+      color:#fef0f0;
+      background-color: #f67777;
+    }
+  }
+  .other_button{
+    border:1px solid #b3d8ff;
+    color:#54a5ff;
+    background-color: #ffffff;
+    &:hover,&:focus{
+      border:1px solid #b3d8ff;
+      color:#ffffff;
+      background-color: #54a5ff;
+    }
+  }
+}

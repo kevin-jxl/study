@@ -1,0 +1,31 @@
+server:
+  port: 1001
+
+spring:
+  security:
+    user:
+      name: ztman
+      password: ztman
+  application:
+    name: eureka
+
+
+eureka:
+  instance:
+    hostname: server0
+    prefer-ip-address: true
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://ztman:ztman@${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    eviction-interval-timer-in-ms: 6000
+    enable-self-preservation: false
+    renewal-percent-threshold: 0.9
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

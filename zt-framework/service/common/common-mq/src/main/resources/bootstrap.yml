@@ -1,0 +1,18 @@
+####单独启动时将本文件注释取消,当作依赖时全部注释
+#server:
+#  port: 8888
+#
+#spring:
+#  application:
+#    name: common-mq
+#  # dev环境
+#  profiles:
+#    active: dev
+#
+## 注册中心配置
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    service-url:
+#      defaultZone: http://spark:spark@localhost:1001/eureka/

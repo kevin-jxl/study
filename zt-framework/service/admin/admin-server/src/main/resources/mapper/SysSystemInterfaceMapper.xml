@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.SysSystemInterfaceMapper">
+
+    <!-- 通用返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.SysSystemInterface" id="sysSystemInterfaceResult">
+        <result property="interfaceId" column="interface_id"/> <!--  -->
+        <result property="sysId" column="sys_id"/> <!-- 系统id -->
+        <result property="interfaceName" column="interface_name"/> <!-- 接口名 -->
+        <result property="url" column="url"/> <!-- URL -->
+        <result property="interfaceFlag" column="interface_flag"/> <!-- 是否启用 1 启用 0 锁定 -->
+        <result property="status" column="status"/> <!-- 接口状态，1 正常 0 异常 -->
+        <result property="lastTestTime" column="last_test_time"/> <!-- 最后检测时间 -->
+        <result property="createBy" column="create_by"/> <!--  -->
+        <result property="createTime" column="create_time"/> <!--  -->
+        <result property="updateBy" column="update_by"/> <!--  -->
+        <result property="updateTime" column="update_time"/> <!--  -->
+        <result property="delFlag" column="del_flag"/> <!--  -->
+        <result property="remark" column="remark"/> <!--  -->
+    </resultMap>
+
+
+    <sql id="selectSysSystemInterfaceVo">
+        select interface_id,
+        sys_id,
+        interface_name,
+        url,
+        interface_flag,
+        status,
+        last_test_time,
+        create_by,
+        create_time,
+        del_flag,
+        remark
+        from sys_system_interface
+    </sql>
+    <!-- 查询对象List -->
+    <select id="selectSysSystemInterfaceList" parameterType="SysSystemInterface" resultMap="sysSystemInterfaceResult">
+        <include refid="selectSysSystemInterfaceVo"/>
+        <where>
+            <include refid="equal"/>
+        </where>
+    </select>
+
+    <!-- 模糊查询对象List -->
+    <select id="selectSysSystemInterfaceListByLike" parameterType="SysSystemInterface"
+            resultMap="sysSystemInterfaceResult">
+        <include refid="selectSysSystemInterfaceVo"/>
+        <where>
+            <include refid="like"/>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!-- 根据主键查询对象 -->
+    <select id="selectSysSystemInterfaceById" parameterType="Integer" resultMap="sysSystemInterfaceResult">
+        <include refid="selectSysSystemInterfaceVo"/>
+        where interface_id = #{interfaceId}
+    </select>
+
+
+    <update id="updateSysSystemInterface" parameterType="SysSystemInterface">
+        update sys_system_interface
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysId != null  ">sys_id = #{sysId},</if>
+            <if test="interfaceName != null  and interfaceName != ''  ">interface_name = #{interfaceName},</if>
+            <if test="url != null  and url != ''  ">url = #{url},</if>
+            <if test="interfaceFlag != null  and interfaceFlag != ''  ">interface_flag = #{interfaceFlag},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="lastTestTime != null  ">last_test_time = #{lastTestTime},</if>
+            <if test="createBy != null  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag = #{delFlag},</if>
+        </trim>
+        where interface_id = #{interfaceId}
+    </update>
+
+    <delete id="deleteSysSystemInterfaceById" parameterType="Integer">
+        delete from sys_system_interface where interface_id = #{interfaceId}
+    </delete>
+
+    <delete id="deleteSysSystemInterfaceByIds" parameterType="String">
+        delete from sys_system_interface where interface_id in
+        <foreach item="interfaceId" collection="array" open="(" separator="," close=")">
+            #{interfaceId}
+        </foreach>
+    </delete>
+
+
+    <!-- 新增对象 -->
+    <insert id="insertSysSystemInterface" parameterType="SysSystemInterface">
+        insert into sys_system_interface
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="interfaceId != null  ">interface_id,</if>
+            <if test="sysId != null  ">sys_id,</if>
+            <if test="interfaceName != null  and interfaceName != ''  ">interface_name,</if>
+            <if test="url != null  and url != ''  ">url,</if>
+            <if test="interfaceFlag != null  and interfaceFlag != ''  ">interface_flag,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="lastTestTime != null  ">last_test_time,</if>
+            <if test="createBy != null  ">create_by,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateBy != null  ">update_by,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="delFlag != null  and delFlag != ''  ">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="interfaceId != null  ">#{interfaceId},</if>
+            <if test="sysId != null  ">#{sysId},</if>
+            <if test="interfaceName != null  and interfaceName != ''  ">#{interfaceName},</if>
+            <if test="url != null  and url != ''  ">#{url},</if>
+            <if test="interfaceFlag != null  and interfaceFlag != ''  ">#{interfaceFlag},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="lastTestTime != null  ">#{lastTestTime},</if>
+            <if test="createBy != null  ">#{createBy},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateBy != null  ">#{updateBy},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="delFlag != null  and delFlag != ''  ">#{delFlag},</if>
+        </trim>
+    </insert>
+
+
+    <!-- 表字段 -->
+    <sql id="column">
+        interface_id,  <!--  -->
+        sys_id,  <!-- 系统id -->
+        interface_name,  <!-- 接口名 -->
+        url,  <!-- URL -->
+        interface_flag,  <!-- 是否启用 1 启用 0 锁定 -->
+        status,  <!-- 接口状态，1 正常 0 异常 -->
+        last_test_time,  <!-- 最后检测时间 -->
+        create_by,  <!--  -->
+        create_time,  <!--  -->
+        update_by,  <!--  -->
+        update_time,  <!--  -->
+        del_flag  <!--  -->
+    </sql>
+
+    <!-- Where精确匹配字段 -->
+    <sql id="equal">
+        <if test="interfaceId != null ">
+            AND interface_id = #{interfaceId}  <!--  -->
+        </if>
+        <if test="sysId != null ">
+            AND sys_id = #{sysId}  <!-- 系统id -->
+        </if>
+        <if test="interfaceName != null and interfaceName != ''">
+            AND interface_name = #{interfaceName}  <!-- 接口名 -->
+        </if>
+        <if test="url != null and url != ''">
+            AND url = #{url}  <!-- URL -->
+        </if>
+        <if test="interfaceFlag != null and interfaceFlag != ''">
+            AND interface_flag = #{interfaceFlag}  <!-- 是否启用 1 启用 0 锁定 -->
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}  <!-- 接口状态，1 正常 0 异常 -->
+        </if>
+        <if test="lastTestTime != null ">
+            AND last_test_time = #{lastTestTime}  <!-- 最后检测时间 -->
+        </if>
+        <if test="createBy != null ">
+            AND create_by = #{createBy}  <!--  -->
+        </if>
+        <if test="createTime != null ">
+            AND create_time = #{createTime}  <!--  -->
+        </if>
+        <if test="updateBy != null ">
+            AND update_by = #{updateBy}  <!--  -->
+        </if>
+        <if test="updateTime != null ">
+            AND update_time = #{updateTime}  <!--  -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag = #{delFlag}  <!--  -->
+        </if>
+    </sql>
+
+    <!-- Where模糊匹配字段 -->
+    <sql id="like">
+        <if test="sysId != null ">
+            AND sys_id = #{sysId}  <!-- 系统id -->
+        </if>
+        <if test="interfaceName != null and interfaceName != ''">
+            AND interface_name like '%${interfaceName}%'  <!-- 接口名 -->
+        </if>
+        <if test="url != null and url != ''">
+            AND url like '%${url}%'  <!-- URL -->
+        </if>
+        <if test="interfaceFlag != null and interfaceFlag != ''">
+            AND interface_flag like '%${interfaceFlag}%'  <!-- 是否启用 1 启用 0 锁定 -->
+        </if>
+        <if test="status != null and status != ''">
+            AND status like '%${status}%'  <!-- 接口状态，1 正常 0 异常 -->
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND del_flag like '%${delFlag}%'  <!--  -->
+        </if>
+    </sql>
+</mapper>

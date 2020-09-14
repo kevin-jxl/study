@@ -1,0 +1,41 @@
+server:
+  port: 2001
+#########################本地配置#######################################
+spring:
+  application:
+    name: config
+  profiles:
+    active: native #本地环境
+  # 配置中心
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config/
+#########################远程git配置#######################################
+#spring:
+#  application:
+#    name: config
+#  cloud:
+#    config:
+#      server:
+#        git:
+#          uri: https://gitee.com/finalcode/spark.git
+#          search-paths: config
+#          username: ppboyhai@163.com
+#          password: fenghai007
+
+# 注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://ztman:ztman@server0:1001/eureka/
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

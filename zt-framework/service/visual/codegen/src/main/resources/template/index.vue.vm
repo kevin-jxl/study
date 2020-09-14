@@ -1,0 +1,482 @@
+<template>
+    <div class="app-container calendar-list-container">
+        <div class="filter-container crud-menu clearfix">
+            <!--检索框-->
+            <div class="form_search clearfix" style="padding:0 10px;">
+                <el-form :inline="true" :model="listQuery" class="search-form-inline">
+                    <el-form-item label="输入搜索:">
+                        <el-input @keyup.enter.native="handleFilter" v-model="listQuery.name" placeholder="请输入用户名/姓名"></el-input>
+                    </el-form-item>
+                    <el-tooltip class="item fj-refresh" effect="dark" content="刷新" placement="top-end">
+                        <span class="el-icon-refresh-right " style="padding:5px;" @click="refresh"></span >
+                    </el-tooltip>
+                </el-form>
+            </div>
+            <el-divider />
+            <div  style="text-align: right;">
+                <el-button class=""
+                    type="primary"
+                    @click="handleCreate"
+                    icon="edit"
+                    size="mini"
+                    style="margin-bottom:10px;"
+                    v-if="userDatas.permissions.indexOf('sys_user_add')">添加用户
+                </el-button>
+            </div>
+        </div>
+        <div style="height:calc(100% - 120px)">
+            <z-table class="full-screen"
+                :data="list"
+                :currentPage="currentPage"
+                :pageSize="pageSize"
+                :total='total'
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange">
+                <div slot="table-column">
+                    <el-table-column align="center" type="index" width='100' label="序号" fixed></el-table-column>
+                  <el-table-column align="center" v-for="tableitem in formThead" :key="tableitem.key" :label="tableitem.label">
+                    <template slot-scope="scope">
+                      {{ scope.row[tableitem.key] }}
+                    </template>
+                  </el-table-column>
+                    <el-table-column label="操作" align="center" width="280" v-if="userDatas.permissions.indexOf('sys_user_edit') ||  userDatas.permissions.indexOf('sys_user_del')">
+                        <template slot-scope="scope">
+                        <el-button
+                            size="mini"
+                            type="primary"
+                            v-if="userDatas.permissions.indexOf('sys_user_edit')"
+                            @click="handleUpdate(scope.row)"
+                        >编辑</el-button>
+                        <el-button
+                            size="mini"
+                            type="primary"
+                            v-if="userDatas.permissions.indexOf('sys_user_del')"
+                            @click="handleDelete(scope.row)"
+                        >删除</el-button>
+                        </template>
+                    </el-table-column>
+                </div>
+            </z-table>
+        </div>
+
+        <!-- 新建 编辑 弹框 -->
+        <div class="dialog_mask_mine">
+            <el-dialog :visible.sync="dialogFormVisible" width="35%">
+                <div slot="title">
+                    <span class="preTitle"></span>
+                    <span class="nextTitle">{{textMap[dialogStatus]}}</span>
+                </div>
+				<div class="fix-width clearfix">
+                    <!--  :rules="rules" -->
+                    <el-form :model="form" class="clearfix" ref='form' :rules="rules">
+                        #foreach($column in $columns)
+                        <el-form-item label="$column.comments"
+                                      prop="$column.lowerAttrName">
+                          #if($column.dataType == 'datetime')
+                          <el-date-picker v-model="form.${column.lowerAttrName}"
+                                          type="datetime"
+                                          placeholder="$column.comments"></el-date-picker>
+                          #else
+                          <el-input v-model="form.${column.lowerAttrName}"
+                                    placeholder="$column.comments"></el-input>
+                          #end
+                        </el-form-item>
+                        #end
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="cancel('form')" size="small">取 消</el-button>
+                        <el-button v-if="dialogStatus=='create'"
+                                    type="primary"
+                                    size="small"
+                                    @click="create('form')">确 定
+                        </el-button>
+                        <el-button v-else
+                                    type="primary"
+                                    size="small"
+                                    @click="update('form')">保存
+                        </el-button>
+                    </div>
+                </div>
+			</el-dialog>
+        </div>
+
+      <!--  &lt;!&ndash; 弹框 &ndash;&gt;
+        <el-drawer :title="textMap[dialogStatus]" :visible.sync="dialogPermissionVisible" class="role_menu">
+            <div slot="title">
+                <span class="titleSpan">{{textMap[dialogStatus]}}</span>
+            </div>
+            <div class="dialog_tree">
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary"
+                    @click="updatePermession(roleId, roleCode)">更 新
+                </el-button>
+            </div>
+        </el-drawer>-->
+
+    </div>
+</template>
+
+<script>
+import {
+    fetchList,
+    getObj,
+    addObj,
+    putObj,
+    delObj,
+    getSyscompany, //企业下拉
+    getRoleList,//角色
+    getMechanism,//车厂下拉
+    getSysserviceorga,//机构下拉
+} from "@/api/basic/users";
+import { fetchTree } from "@/api/basic/menu";
+import { mapGetters } from "vuex";
+import ZTable from '@/components/ZTable.vue'
+import waves from "@/directive/waves/index.js"; // 水波纹指令
+const defaultFormThead = [
+  #foreach ($column in $columns)
+  { key: '$column.lowerAttrName', label: '$column.comments' },
+  #end
+];
+//默认当前选中的显示列
+const defaultFormTheadKey = [
+  #foreach ($column in $columns)
+  '$column.lowerAttrName',
+  #end
+];
+export default {
+    name: "table_role",
+    components: { ZTable },
+
+    directives: {
+        waves
+    },
+    computed: {
+    },
+    data() {
+        return {
+            formTheadOptions:defaultFormThead,
+            checkboxVal: defaultFormTheadKey, // 默认全选中
+            formThead: defaultFormThead, // 默认表头 Default header
+            treeData: [],
+            checkedKeys: [],
+            defaultProps: {
+                children: "children",
+                label: "name"
+            },
+            menuIds: "",
+            list: null,
+            total: 0,
+            listLoading: true,
+            listQuery: {
+                page: 1,
+                limit: 20,
+                username:'',
+                companyName:'',
+                organName:''
+            },
+            roleId: undefined,
+            roleCode: undefined,
+            deptTypes:[],
+            roleList:[],
+            rules: {
+                username: [
+                    {
+                        required: true,
+                        message: "用户名不能为空",
+                        trigger: "blur"
+                    },
+                ],
+                password: [
+                    {
+                        required: true,
+                        message: "密码不能为空",
+                        trigger: "blur"
+                    },
+                ],
+                // roleCode: [
+                //     {
+                //         required: true,
+                //         message: "角色标识",
+                //         trigger: "blur"
+                //     },
+                //     {
+                //         min: 3,
+                //         max: 20,
+                //         message: "长度在 3 到 20 个字符",
+                //         trigger: "blur"
+                //     }
+                // ]
+            },
+            form: { 
+                username: undefined,
+                userRealname: undefined,
+                empno: undefined,
+                phone: undefined,
+                companyId:undefined,
+                organId:undefined,
+                postName:undefined,
+                roleId: undefined,
+                region: undefined,
+                password: undefined,
+                remark:undefined,
+                userId:'',
+                serviceOrganId:undefined
+            },
+            dialogFormVisible: false,
+            dialogPermissionVisible: false,
+            dialogStatus: "",
+            textMap: {
+                update: "编辑",
+                create: "添加用户",
+            },
+            isTrue:true,
+            value:'',
+            value1:'',
+            currentPage:1,
+            pageSize:30,
+            formLabelWidth:'120px',
+            mechanism:[],
+            sysserviceList:[],
+            permissionsList:[],
+            userDatas:{}
+        };
+    },
+    inject:['reload'],
+    created() {
+        let me = this;
+        me.permissionsList = me.$store.state.munuAuthority;
+        me.userDatas = JSON.parse(sessionStorage.getItem('userData'))
+        me.getList();
+        me.form.userId = this.userDatas.sysUser.userId;
+        if(me.userDatas.sysUser.userId != ''){
+            me.getSyscompanys();
+            me.getRoleLists();
+            me.getMechanisms();
+            me.getSysserviceorgas();
+        }
+    },
+    mounted(){
+        let me = this;
+        me.form.userId = this.userDatas.sysUser.userId;
+        if(me.userDatas.sysUser.userId != ''){
+            me.getSyscompanys();
+            me.getRoleLists();
+            me.getMechanisms();
+            me.getSysserviceorgas();
+        }
+    },
+    methods: {
+        refresh(){
+            this.reload()
+        },
+        getList() {
+            let me = this;
+            me.listLoading = true;
+            fetchList(this.listQuery).then(response => {
+                me.list = response.data.records;
+                me.list.forEach(item=>{
+                    if(item.userFlag==1){
+                        item.userFlag=true
+                    }else if(item.userFlag==0){
+                        item.userFlag=false
+                    }
+                })
+                me.total = response.data.total;
+                me.listLoading = false;
+            });
+        },
+        handleFilter() {
+            this.listQuery.page = 1;
+            this.getList();
+        },
+        // 分页
+        handleSizeChange(val) {
+            this.listQuery.limit = val;
+            this.getList();
+        },
+        handleCurrentChange(val) {
+            this.listQuery.page = val;
+            this.getList();
+        },
+        handleUpdate(row) {
+            getObj(row.$pk.lowerAttrName).then(response => {
+                console.log('response',response.data.data)
+                this.form = response.data.data;
+                this.form.password='******'
+                this.dialogFormVisible = true;
+                this.dialogStatus = "update";
+            });
+        },
+        //切换开启关闭服务
+        switchChange(row){
+            let me=this,params ={
+                userId:row.userId,
+                userFlag:row.userFlag?1:0
+            }
+            console.log('row',row)
+            putObj(params).then(() => {
+                // this.getList();
+                this.$notify({
+                    title: "成功",
+                    message: "修改成功",
+                    type: "success",
+                    duration: 2000
+                });
+            });
+        },
+
+        // 删除
+        handleDelete(row) {
+            this.$confirm(
+                "是否确认删除角色为" + row.$pk.lowerAttrName + ", 是否继续?",
+                "提示",
+                {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            }
+            ).then(() => {
+                delObj($pk.lowerAttrName)
+                .then(response => {
+                    this.dialogFormVisible = false;
+                    this.getList();
+                    this.$notify({
+                        title: "成功",
+                        message: "删除成功",
+                        type: "success",
+                        duration: 2000
+                    });
+                })
+                .catch(() => {
+                    this.$notify({
+                    title: "失败",
+                    message: "删除失败",
+                    type: "error",
+                    duration: 2000
+                    });
+                });
+            });
+        },
+        getSyscompanys(){  //企业下拉列表
+            let me = this,
+            params={
+                userId:me.form.userId
+            }
+            getSyscompany(params).then(response => {
+                this.deptTypes = response.data;
+                console.log('deptTypes', this.deptTypes)
+            });
+        },
+        getRoleLists(){  //角色下拉列表
+            getRoleList().then(response => {
+                this.roleList = response.data;
+                // console.log('response',response)
+            });
+        },
+        getMechanisms(){  //车场下拉列表
+            let me = this,
+            params={
+                userId:me.form.userId
+            }
+            getMechanism(params).then(response => {
+                this.mechanism = response.data;
+            });
+        },
+        getSysserviceorgas(){ //机构下拉
+            let me = this,
+            params={
+                userId:me.form.userId
+            }
+            getSysserviceorga(params).then(response => {
+                // console.log('机构',response)
+                this.sysserviceList = response.data;
+            });
+        },
+        create(formName) { //新增
+            const set = this.$refs;
+            console.log('set',set[formName])
+            this.form.postId = this.form.post;
+            set[formName].validate(valid => {
+                if (valid) {
+                addObj(this.form).then(() => {
+                    this.dialogFormVisible = false;
+                    this.getList();
+                    this.$notify({
+                        title: "成功",
+                        message: "创建成功",
+                        type: "success",
+                        duration: 2000
+                    });
+                });
+                } else {
+                    return false;
+                }
+            });
+        },
+
+        cancel(formName) {
+            this.dialogFormVisible = false;
+            if(this.$refs['form']){
+                this.$refs['form'].resetFields();
+            }
+        },
+        // 新增
+        handleCreate() {
+            this.resetTemp()
+            this.dialogStatus = 'create'
+            this.dialogFormVisible = true
+        },
+        // 重置
+        resetTemp() {
+            this.form = {
+                id: undefined,
+                roleName: undefined,
+                roleCode: undefined,
+                roleDesc: undefined
+            }
+        },
+        //修改
+        update(formName) {
+            const set = this.$refs;
+            set[formName].validate(valid => {
+                if (valid) {
+                this.dialogFormVisible = false;
+                this.form.password = null;
+                putObj(this.form).then(() => {
+                    this.dialogFormVisible = false;
+                    this.getList();
+                    this.$notify({
+                    title: "成功",
+                    message: "修改成功",
+                    type: "success",
+                    duration: 2000
+                    });
+                });
+                } else {
+                return false;
+                }
+            });
+        },
+        // 修改table header的背景色
+        tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+            if (rowIndex === 0) {
+                return "background-color: #fafafa;color:#999; font-size:12px;";
+            }
+        }
+    }
+};
+</script>
+<style lang="scss" scoped>
+
+.app-container {
+    height: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	background: #fff;
+}
+
+.v-deep .el-form-item {
+    margin-bottom: 20px !important;
+}
+</style>

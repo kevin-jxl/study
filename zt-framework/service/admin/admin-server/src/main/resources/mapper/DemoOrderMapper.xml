@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ztman.admin.mapper.DemoOrderMapper">
+
+	<!-- 默认返回对象 -->
+    <resultMap type="com.ztman.admin.api.entity.DemoOrder" id="demoOrderMap">
+                        <result property="id" column="id"/>
+                        <result property="productId" column="product_id"/>
+                        <result property="productNum" column="product_num"/>
+                        <result property="createTime" column="create_time"/>
+                        <result property="updateTime" column="update_time"/>
+            </resultMap>
+
+
+</mapper>
