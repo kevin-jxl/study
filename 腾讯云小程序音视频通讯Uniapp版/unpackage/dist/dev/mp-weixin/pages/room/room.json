@@ -1,6 +1,0 @@
-{
-  "navigationStyle": "custom",
-  "usingComponents": {
-    "trtc-room": "/components/trtc-room/trtc-room"
-  }
-}
