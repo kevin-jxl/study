@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("code")
 public class Code {
 
-    @GetMapping("get")
-    public String getcode(@RequestParam String name) {
-        return "恭喜=" + name;
+    @GetMapping
+    public String getcode(@RequestParam(required = false) String name) {
+        return "欢迎" + (name == null ? "默认用户" : name) +"进入系统";
     }
 }
