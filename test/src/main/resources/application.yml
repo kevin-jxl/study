@@ -2,11 +2,7 @@ spring:
     datasource:
         driverClassName: com.mysql.jdbc.Driver
         platform: mysql
-<<<<<<< HEAD
-        url: jdbc:mysql://127.0.0.1:3306/husen?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
-=======
         url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
->>>>>>> 04e09d7d9d0ed86ecf0388e319ee452f4af25b23
         username: root
         password:
     redis:
