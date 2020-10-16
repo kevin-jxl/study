@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.ztman.admin.api.feign.fallback.RemoteUserServiceFallbackImpl,\
-  com.ztman.admin.api.feign.fallback.RemoteLogServiceFallbackImpl\
